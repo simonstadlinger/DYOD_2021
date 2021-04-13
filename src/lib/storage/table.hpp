@@ -25,15 +25,10 @@ class Table : private Noncopyable {
   // creates a table
   // the parameter specifies the maximum chunk size, i.e., partition size
   // default is the maximum chunk size minus 1. A table holds always at least one chunk
-  explicit Table(const uint32_t chunk_size = std::numeric_limits<ChunkOffset>::max() - 1);
-
-  // we need to explicitly set the move constructor to default when
-  // we overwrite the copy constructor
-  Table(Table&&) = default;
-  Table& operator=(Table&&) = default;
+  explicit Table(const ChunkOffset target_chunk_size = std::numeric_limits<ChunkOffset>::max() - 1);
 
   // returns the number of columns (cannot exceed ColumnID (uint16_t))
-  uint16_t column_count() const;
+  ColumnCount column_count() const;
 
   // Returns the number of rows.
   // This number includes invalidated (deleted) rows.
@@ -54,18 +49,18 @@ class Table : private Noncopyable {
   const std::vector<std::string>& column_names() const;
 
   // returns the column name of the nth column
-  const std::string& column_name(ColumnID column_id) const;
+  const std::string& column_name(const ColumnID column_id) const;
 
   // returns the column type of the nth column
-  const std::string& column_type(ColumnID column_id) const;
+  const std::string& column_type(const ColumnID column_id) const;
 
   // Returns the column with the given name.
   // This method is intended for debugging purposes only.
   // It does not verify whether a column name is unambiguous.
   ColumnID column_id_by_name(const std::string& column_name) const;
 
-  // return the maximum chunk size (cannot exceed ChunkOffset (uint32_t))
-  uint32_t max_chunk_size() const;
+  // return the target chunk size (cannot exceed ChunkOffset (uint32_t))
+  ChunkOffset target_chunk_size() const;
 
   // adds a column to the end, i.e., right, of the table
   // this can only be done if the table does not yet have any entries, because we would otherwise have to deal
@@ -74,7 +69,7 @@ class Table : private Noncopyable {
 
   // inserts a row at the end of the table
   // note this is slow and not thread-safe and should be used for testing purposes only
-  void append(std::vector<AllTypeVariant> values);
+  void append(const std::vector<AllTypeVariant>& values);
 
  protected:
   // Implementation goes here

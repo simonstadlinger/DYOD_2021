@@ -9,14 +9,11 @@
 
 #include "type_cast.hpp"
 #include "utils/assert.hpp"
-#include "utils/performance_warning.hpp"
 
 namespace opossum {
 
 template <typename T>
 AllTypeVariant ValueSegment<T>::operator[](const ChunkOffset chunk_offset) const {
-  PerformanceWarning("operator[] used");
-
   throw std::runtime_error("Implement ValueSegment::operator[]");
 }
 
@@ -26,7 +23,7 @@ void ValueSegment<T>::append(const AllTypeVariant& val) {
 }
 
 template <typename T>
-size_t ValueSegment<T>::size() const {
+ChunkOffset ValueSegment<T>::size() const {
   // Implementation goes here
   return 0;
 }

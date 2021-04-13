@@ -1,11 +1,13 @@
 #pragma once
 
-#include <boost/preprocessor/stringize.hpp>
-
 #include <exception>
 #include <iostream>
 #include <stdexcept>
 #include <string>
+
+#include <boost/preprocessor/stringize.hpp>
+
+#include "string_utils.hpp"
 
 /**
  * This file provides better assertions than the std cassert/assert.h - DebugAssert(condition, msg) and Fail(msg) can be
@@ -36,24 +38,26 @@
 
 namespace opossum {
 
-template <typename T>
-inline void Assert(const T& value, const std::string& msg) {
-  if (static_cast<bool>(value)) {
-    return;
-  }
-  throw std::logic_error(msg);
-}
+namespace detail {
+// We need this indirection so that we can throw exceptions from destructors without the compiler complaining. That is
+// generally forbidden and might lead to std::terminate, but since we don't want to handle most errors anyway,
+// that's fine.
+[[noreturn]] inline void fail(const std::string& msg) { throw std::logic_error(msg); }
+}  // namespace detail
 
-inline void Fail(const std::string& msg) { throw std::logic_error(msg); }
-
+#define Fail(msg)                                                                                               \
+  opossum::detail::fail(opossum::trim_source_file_path(__FILE__) + ":" BOOST_PP_STRINGIZE(__LINE__) " " + msg); \
+  static_assert(true, "End call of macro with a semicolon")
 }  // namespace opossum
 
-#if IS_DEBUG
-#ifndef __FILENAME__
-#define __FILENAME__ (__FILE__ + SOURCE_PATH_SIZE)
-#endif
-#define DebugAssert(expr, msg) \
-  opossum::Assert((expr), std::string{__FILENAME__} + ":" BOOST_PP_STRINGIZE(__LINE__) " " + msg)  //  NOLINT
+#define Assert(expr, msg)         \
+  if (!static_cast<bool>(expr)) { \
+    Fail(msg);                    \
+  }                               \
+  static_assert(true, "End call of macro with a semicolon")
+
+#if HYRISE_DEBUG
+#define DebugAssert(expr, msg) Assert(expr, msg)
 #else
 #define DebugAssert(expr, msg)
 #endif

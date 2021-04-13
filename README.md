@@ -1,10 +1,10 @@
-# Hyrise v2 (Codename OpossumDB)
+# Hyrise (Codename OpossumDB)
 
 *Have a look at our [contributor guidelines](CONTRIBUTING.md)*
 
 ## Dependencies
-You can install the dependencies on your own or use the install.sh script (**recommended**) which installs all of the therein listed dependencies and submodules.
-The install script was tested under macOS 10.13, 10.14 (brew) and Ubuntu 18.04 (apt-get).
+You can install the dependencies on your own or use the install_dependencies.sh script (**recommended**) which installs all of the therein listed dependencies and submodules.
+The install script was tested under macOS Big Sur and Ubuntu 20.04 (apt-get).
 
 See [dependencies.md](dependencies.md) for a detailed list of dependencies to use with `brew install` or `apt-get install`, depending on your platform. As compilers, we generally use the most recent version of gcc and clang.
 Older versions may work, but are neither tested nor supported.
@@ -26,15 +26,13 @@ Usually debug binaries are created.
 To configure a build directory for a release build make sure it is empty and call CMake like `cmake -DCMAKE_BUILD_TYPE=Release`
 
 ### Lint
-`./scripts/lint.sh` (Google's cpplint is used which needs python 2.7)
+`./scripts/lint.sh` (Google's cpplint is used.)
 
 ### Format
-`./scripts/format.sh` (clang-format is used)
+`./scripts/format.sh` (clang-format is used.)
 
 ### Test
 Calling `make hyriseTest` from the build directory builds all available tests.
-The binary can be executed with `./<YourBuildDirectory>/hyriseTest`.
-Note, that the tests need to be executed from the project root in order for table-files to be found.
 
 ### Coverage
 After building `hyriseCoverage`, `./scripts/coverage.sh <build dir>` will print a summary to the command line and create detailed html reports at ./coverage/index.html
@@ -42,12 +40,25 @@ After building `hyriseCoverage`, `./scripts/coverage.sh <build dir>` will print 
 *Supports only clang on MacOS and only gcc on linux*
 
 ### AddressSanitizer
-`make hyriseSanitizers` will build Hyrise with enabled AddressSanitizer and Undefined Behavior options and execute all available tests.
+`cmake -DENABLE_ADDR_UB_SANITIZATION=ON` will generate Makefiles with AddressSanitizer and Undefined Behavior options. will build Hyrise with enabled AddressSanitizer and Undefined Behavior options and execute all available tests.
 It will fail on the first detected error and will print a summary.
 To convert addresses to actual source code locations, make sure llvm-symbolizer is installed (included in the llvm package) and is available in `$PATH`.
 To specify a custom location for the symbolizer, set `$ASAN_SYMBOLIZER_PATH` to the path of the executable.
 This seems to work out of the box on macOS - If not, make sure to have llvm installed.
 The binary can be executed with `LSAN_OPTIONS=suppressions=asan-ignore.txt ./<YourBuildDirectory>/hyriseAsan`.
+
+
+### Address/UndefinedBehavior Sanitizers
+`cmake -DENABLE_ADDR_UB_SANITIZATION=ON` will generate Makefiles with AddressSanitizer and Undefined Behavior options.
+Compile and run them as normal - if any issues are detected, they will be printed to the console.
+It will fail on the first detected error and will print a summary.
+To convert addresses to actual source code locations, make sure llvm-symbolizer is installed (included in the llvm package) and is available in `$PATH`.
+To specify a custom location for the symbolizer, set `$ASAN_SYMBOLIZER_PATH` to the path of the executable.
+This seems to work out of the box on macOS - If not, make sure to have llvm installed.
+The binary can be executed with `LSAN_OPTIONS=suppressions=asan-ignore.txt ./<YourBuildDirectory>/hyriseTest`.
+
+`cmake -DENABLE_THREAD_SANITIZATION=ON` will work as above but with the ThreadSanitizer. Some sanitizers are mutually exclusive, which is why we use two configurations for this.
+
 
 ## Naming convention for gtest macros:
 
@@ -63,9 +74,8 @@ If you want to test a single module, class or test you have to execute the test 
 ## Maintainers
 
 - Jan Kossmann
-- Markus Dreseler
+- Marcel Weisgut
 - Martin Boissier
-- Stefan Klauck
 
 
 Contact: firstname.lastname@hpi.de

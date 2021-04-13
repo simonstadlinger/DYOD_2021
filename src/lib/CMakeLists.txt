@@ -19,6 +19,8 @@ set(
     utils/assert.hpp
     utils/load_table.cpp
     utils/load_table.hpp
+    utils/string_utils.cpp
+    utils/string_utils.hpp
 )
 
 set(

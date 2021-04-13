@@ -17,17 +17,21 @@
 
 namespace opossum {
 
+Table::Table(const ChunkOffset target_chunk_size) {
+  // Implementation goes here
+}
+
 void Table::add_column(const std::string& name, const std::string& type) {
   // Implementation goes here
 }
 
-void Table::append(std::vector<AllTypeVariant> values) {
+void Table::append(const std::vector<AllTypeVariant>& values) {
   // Implementation goes here
 }
 
-uint16_t Table::column_count() const {
+ColumnCount Table::column_count() const {
   // Implementation goes here
-  return 0;
+  return ColumnCount{0};
 }
 
 uint64_t Table::row_count() const {
@@ -45,7 +49,7 @@ ColumnID Table::column_id_by_name(const std::string& column_name) const {
   return ColumnID{0};
 }
 
-uint32_t Table::max_chunk_size() const {
+ChunkOffset Table::target_chunk_size() const {
   // Implementation goes here
   return 0;
 }
@@ -54,11 +58,11 @@ const std::vector<std::string>& Table::column_names() const {
   throw std::runtime_error("Implement Table::column_names()");
 }
 
-const std::string& Table::column_name(ColumnID column_id) const {
+const std::string& Table::column_name(const ColumnID column_id) const {
   throw std::runtime_error("Implement Table::column_name");
 }
 
-const std::string& Table::column_type(ColumnID column_id) const {
+const std::string& Table::column_type(const ColumnID column_id) const {
   throw std::runtime_error("Implement Table::column_type");
 }
 

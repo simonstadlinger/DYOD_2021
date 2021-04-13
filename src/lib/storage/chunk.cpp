@@ -27,12 +27,12 @@ std::shared_ptr<BaseSegment> Chunk::get_segment(ColumnID column_id) const {
   return nullptr;
 }
 
-uint16_t Chunk::column_count() const {
+ColumnCount Chunk::column_count() const {
   // Implementation goes here
-  return 0;
+  return ColumnCount{0};
 }
 
-uint32_t Chunk::size() const {
+ChunkOffset Chunk::size() const {
   // Implementation goes here
   return 0;
 }

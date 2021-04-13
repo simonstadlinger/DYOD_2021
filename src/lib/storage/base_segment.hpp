@@ -27,6 +27,6 @@ class BaseSegment : private Noncopyable {
   virtual void append(const AllTypeVariant& val) = 0;
 
   // returns the number of values
-  virtual size_t size() const = 0;
+  virtual ChunkOffset size() const = 0;
 };
 }  // namespace opossum

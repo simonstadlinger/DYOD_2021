@@ -20,8 +20,8 @@ std::shared_ptr<Table> load_table(const std::string& file_name, size_t chunk_siz
   std::vector<std::string> column_types = _split<std::string>(line, '|');
 
   std::shared_ptr<Table> test_table = std::make_shared<Table>(chunk_size);
-  for (size_t i = 0; i < column_names.size(); i++) {
-    test_table->add_column(column_names[i], column_types[i]);
+  for (auto column_id = ColumnID{0}; column_id < column_names.size(); column_id++) {
+    test_table->add_column(column_names[column_id], column_types[column_id]);
   }
 
   while (std::getline(infile, line)) {

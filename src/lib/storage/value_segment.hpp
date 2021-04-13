@@ -20,7 +20,7 @@ class ValueSegment : public BaseSegment {
   void append(const AllTypeVariant& val) final;
 
   // return the number of entries
-  size_t size() const final;
+  ChunkOffset size() const final;
 
   // Return all values. This is the preferred method to check a value at a certain index. Usually you need to
   // access more than a single value anyway.

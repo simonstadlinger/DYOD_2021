@@ -1,8 +1,11 @@
 if (${CMAKE_BUILD_TYPE} STREQUAL "Debug")
-    add_definitions(-DIS_DEBUG=1)
+    set(HYRISE_DEBUG 1)
 else()
-    add_definitions(-DIS_DEBUG=0)
+    set(HYRISE_DEBUG 0)
 endif()
+
+add_definitions(-DHYRISE_DEBUG=${HYRISE_DEBUG})
+
 
 # This will be used by the DebugAssert macro to output
 # a file path relative to CMAKE_SOURCE_DIR

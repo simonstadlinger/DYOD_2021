@@ -1,5 +1,9 @@
 #pragma once
 
+#include <cstdint>
+#include <string>
+#include <vector>
+
 #include <boost/hana/ext/boost/mpl/vector.hpp>
 #include <boost/hana/pair.hpp>
 #include <boost/hana/prepend.hpp>
@@ -13,10 +17,6 @@
 #include <boost/preprocessor/seq/enum.hpp>
 #include <boost/preprocessor/seq/for_each.hpp>
 #include <boost/preprocessor/seq/transform.hpp>
-
-#include <cstdint>
-#include <string>
-#include <vector>
 
 #include "types.hpp"
 

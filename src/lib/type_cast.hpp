@@ -1,13 +1,13 @@
 #pragma once
 
+#include <string>
+
 #include <boost/hana/contains.hpp>
 #include <boost/hana/integral_constant.hpp>
 #include <boost/hana/not_equal.hpp>
 #include <boost/hana/size.hpp>
 #include <boost/hana/take_while.hpp>
 #include <boost/lexical_cast.hpp>
-
-#include <string>
 
 #include "all_type_variant.hpp"
 
@@ -38,7 +38,7 @@ const T& get(const AllTypeVariant& value) {
 // Template specialization for everything but integral types
 template <typename T>
 std::enable_if_t<!std::is_integral<T>::value, T> type_cast(const AllTypeVariant& value) {
-  if (value.which() == detail::index_of(types, hana::type_c<T>)) return get<T>(value);
+  if (static_cast<size_t>(value.which()) == detail::index_of(types, hana::type_c<T>)) return get<T>(value);
 
   return boost::lexical_cast<T>(value);
 }
@@ -46,7 +46,7 @@ std::enable_if_t<!std::is_integral<T>::value, T> type_cast(const AllTypeVariant&
 // Template specialization for integral types
 template <typename T>
 std::enable_if_t<std::is_integral<T>::value, T> type_cast(const AllTypeVariant& value) {
-  if (value.which() == detail::index_of(types, hana::type_c<T>)) return get<T>(value);
+  if (static_cast<size_t>(value.which()) == detail::index_of(types, hana::type_c<T>)) return get<T>(value);
 
   try {
     return boost::lexical_cast<T>(value);

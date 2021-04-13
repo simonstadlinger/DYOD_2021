@@ -1,13 +1,13 @@
 #pragma once
 
-#include <boost/hana/equal.hpp>
-#include <boost/hana/for_each.hpp>
-#include <boost/hana/size.hpp>
-
 #include <functional>
 #include <memory>
 #include <string>
 #include <utility>
+
+#include <boost/hana/equal.hpp>
+#include <boost/hana/for_each.hpp>
+#include <boost/hana/size.hpp>
 
 #include "all_type_variant.hpp"
 #include "utils/assert.hpp"
@@ -17,57 +17,6 @@
 namespace opossum {
 
 namespace hana = boost::hana;
-
-/**
- * Resolves a type string by creating an instance of a templated class and
- * returning it as a unique_ptr of its non-templated base class.
- *
- * @param type is a string representation of any of the supported data types
- * @param args is a list of constructor arguments
- *
- *
- * Example:
- *
- *   class BaseImpl {
- *    public:
- *     virtual void execute() = 0;
- *   };
- *
- *   template <typename T>
- *   class Impl : public BaseImpl {
- *    public:
- *     Impl(int var) : _var{var} { ... }
- *
- *     void execute() override { ... }
- *   };
- *
- *   constexpr auto var = 12;
- *   auto impl = make_unique_by_data_type<BaseImpl, Impl>("string", var);
- *   impl->execute();
- */
-template <class Base, template <typename...> class Impl, class... TemplateArgs, typename... ConstructorArgs>
-std::unique_ptr<Base> make_unique_by_data_type(const std::string& type, ConstructorArgs&&... args) {
-  std::unique_ptr<Base> ret = nullptr;
-  hana::for_each(data_types, [&](auto x) {
-    if (std::string(hana::first(x)) == type) {
-      // The + before hana::second - which returns a reference - converts its return value
-      // into a value so that we can access ::type
-      using DataType = typename decltype(+hana::second(x))::type;
-      ret = std::make_unique<Impl<DataType, TemplateArgs...>>(std::forward<ConstructorArgs>(args)...);
-      return;
-    }
-  });
-  DebugAssert(static_cast<bool>(ret), "unknown type " + type);
-  return ret;
-}
-
-/**
- * Convenience function. Calls make_unique_by_data_type and casts the result into a shared_ptr.
- */
-template <class Base, template <typename...> class impl, class... TemplateArgs, class... ConstructorArgs>
-std::shared_ptr<Base> make_shared_by_data_type(const std::string& type, ConstructorArgs&&... args) {
-  return make_unique_by_data_type<Base, impl, TemplateArgs...>(type, std::forward<ConstructorArgs>(args)...);
-}
 
 /**
  * Resolves a type string by passing a hana::type object on to a generic lambda
