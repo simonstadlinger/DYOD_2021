@@ -18,40 +18,59 @@
 namespace opossum {
 
 Table::Table(const ChunkOffset target_chunk_size) {
-  // Implementation goes here
+  this->max_chunk_size = target_chunk_size;
+  this->n_cols = 0;
 }
 
 void Table::add_column(const std::string& name, const std::string& type) {
-  // Implementation goes here
+  this->col_names.push_back(name);
+  this->col_types.push_back(type);
+  // Add a Segment for each Chunk
+  int size = this->chunks.size();
+  for(int i = 0; i < size; i++) {
+    resolve_data_type(type, [&](auto type) {
+      using ColumnDataType = typename decltype(type)::type;
+      this->chunks.at(i).add_segment(std::make_shared<ValueSegment<ColumnDataType>>());
+    });
+  }
+  this->n_cols++;
 }
 
 void Table::append(const std::vector<AllTypeVariant>& values) {
-  // Implementation goes here
+  
 }
 
 ColumnCount Table::column_count() const {
-  // Implementation goes here
-  return ColumnCount{0};
+  int c = this->n_cols;
+  return ColumnCount{c};
 }
 
 uint64_t Table::row_count() const {
-  // Implementation goes here
-  return 0;
+  if(this->chunks.size() == 0) return 0;
+  int c = (this->chunks.size() - 1) * this->max_chunk_size + this->chunks.back().size();
+  return c;
 }
 
 ChunkID Table::chunk_count() const {
-  // Implementation goes here
-  return ChunkID{0};
+  int c = this->chunks.size();
+  return ChunkID{c};
 }
 
 ColumnID Table::column_id_by_name(const std::string& column_name) const {
-  // Implementation goes here
+  auto id = std::find(this->col_names.begin(), this->col_names.end(), column_name);
+  if (id != this->col_names.end())
+    {
+        int index = id - this->col_names.begin();
+        return ColumnID{index};
+    }
+  else {
+    throw std::runtime_error("No column with such a name");
+  }
   return ColumnID{0};
 }
 
 ChunkOffset Table::target_chunk_size() const {
-  // Implementation goes here
-  return 0;
+  return this->max_chunk_size;
 }
 
 const std::vector<std::string>& Table::column_names() const {

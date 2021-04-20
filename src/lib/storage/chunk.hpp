@@ -42,6 +42,7 @@ class Chunk : private Noncopyable {
 
  protected:
   // Implementation goes here
+  std::vector<std::shared_ptr<BaseSegment>> segments;
 };
 
 }  // namespace opossum
