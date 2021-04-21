@@ -74,9 +74,12 @@ class Table : private Noncopyable {
  protected:
   // Implementation goes here
   ChunkOffset max_chunk_size;
-  std::vector<Chunk> chunks;
+  std::vector<std::shared_ptr<Chunk>> chunks;
   std::vector<std::string> col_names;
   std::vector<std::string> col_types;
   int n_cols;
+
+  void _add_segment_to_chunk(std::shared_ptr<Chunk> chunk, int seg_index);
+  void _add_segments_to_chunk(std::shared_ptr<Chunk> chunk);
 };
 }  // namespace opossum
