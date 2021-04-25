@@ -10,38 +10,48 @@
 namespace opossum {
 
 StorageManager& StorageManager::get() {
-  return *(new StorageManager());
+  static StorageManager sm;
+  return sm; 
   // A really hacky fix to get the tests to run - replace this with your implementation
 }
 
 void StorageManager::add_table(const std::string& name, std::shared_ptr<Table> table) {
-  // Implementation goes here
+  tables[name] = table; 
 }
 
 void StorageManager::drop_table(const std::string& name) {
-  // Implementation goes here
+  if (tables.at(name) != NULL){
+    tables.erase(name);
+  }else {
+    throw std::runtime_error("no such table");
+  }
 }
 
 std::shared_ptr<Table> StorageManager::get_table(const std::string& name) const {
-  // Implementation goes here
+  if (tables.at(name) != NULL ) return tables.at(name); 
   return nullptr;
 }
 
 bool StorageManager::has_table(const std::string& name) const {
-  // Implementation goes here
-  return false;
+   return tables.contains(name);
 }
 
 std::vector<std::string> StorageManager::table_names() const {
-  throw std::runtime_error("Implement StorageManager::table_names");
+  std::vector<std::string> names;
+  for (auto it = tables.begin(); it != tables.end(); ++it){
+    names.push_back(it-> first); 
+  }
+  return names;
 }
 
 void StorageManager::print(std::ostream& out) const {
-  // Implementation goes here
+  for (auto it = tables.begin(); it != tables.end(); ++it){
+      it->second->print(); 
+  }
 }
 
 void StorageManager::reset() {
-  // Implementation goes here;
+  tables.clear();
 }
 
 }  // namespace opossum

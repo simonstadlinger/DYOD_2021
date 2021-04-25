@@ -40,7 +40,10 @@ class Chunk : private Noncopyable {
   // Returns the segment at a given position
   std::shared_ptr<BaseSegment> get_segment(ColumnID column_id) const;
 
+  void print(std::ostream& out = std::cout) const;
+
  protected:
+  std::vector<std::shared_ptr<BaseSegment>> segments; 
   // Implementation goes here
 };
 

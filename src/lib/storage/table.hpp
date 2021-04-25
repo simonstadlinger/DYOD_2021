@@ -71,7 +71,16 @@ class Table : private Noncopyable {
   // note this is slow and not thread-safe and should be used for testing purposes only
   void append(const std::vector<AllTypeVariant>& values);
 
+  void print(std::ostream& out =  std::cout) const;
+
  protected:
+  const ChunkOffset max_chunk_size;
+  std::vector<std::shared_ptr<Chunk>> chunks;
+  std::vector<std::string> col_names;
+  std::vector<std::string> col_types;
+  uint16_t n_cols;
   // Implementation goes here
+
+  void _add_segment_to_chunk(std::shared_ptr<Chunk> chunk, std::string type);
 };
 }  // namespace opossum

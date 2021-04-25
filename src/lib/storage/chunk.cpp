@@ -15,26 +15,45 @@
 namespace opossum {
 
 void Chunk::add_segment(std::shared_ptr<BaseSegment> segment) {
-  // Implementation goes here
+  segments.push_back(segment);
 }
 
 void Chunk::append(const std::vector<AllTypeVariant>& values) {
   // Implementation goes here
+
+  DebugAssert(!values.empty(), "");
+  DebugAssert(values.size() == segments.size(), "");
+
+  int size = segments.size();
+  for(int i = 0; i < size; i++){
+
+    segments[i]->append(values[i]); 
+  }
 }
 
 std::shared_ptr<BaseSegment> Chunk::get_segment(ColumnID column_id) const {
-  // Implementation goes here
-  return nullptr;
+  return segments[column_id];
 }
 
 ColumnCount Chunk::column_count() const {
   // Implementation goes here
-  return ColumnCount{0};
+  uint16_t count = segments.size();
+  return ColumnCount{count};
 }
 
 ChunkOffset Chunk::size() const {
-  // Implementation goes here
-  return 0;
+  if(segments.empty()) return 0;
+  else return segments[0]->size();
 }
+
+void Chunk::print(std::ostream& out = std::cout) const {
+  for (ChunkOffset i = 0; i < segments.size(); i++){
+    for (ValueSegment<BaseSegment> segment : segments){
+      std::cout << segment[i] ; 
+    }
+    std::cout << "\n"; 
+  }
+}
+
 
 }  // namespace opossum

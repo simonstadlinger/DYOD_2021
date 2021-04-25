@@ -17,57 +17,110 @@
 
 namespace opossum {
 
-Table::Table(const ChunkOffset target_chunk_size) {
+Table::Table(const ChunkOffset target_chunk_size): max_chunk_size { target_chunk_size} {
   // Implementation goes here
+  //max_chunk_size = target_chunk_size;
+  chunks.push_back(std::make_shared<Chunk>());
+  n_cols = 0;
 }
 
 void Table::add_column(const std::string& name, const std::string& type) {
-  // Implementation goes here
+  col_names.push_back(name);
+  col_types.push_back(type);
+
+  for(auto chunk : chunks){
+    // resolve_data_type(type, [&](const auto data_type_t) {
+    //   using ColumnDataType = typename decltype(data_type_t)::type;
+    //   const auto value_segment = std::make_shared<ValueSegment<ColumnDataType>>();
+    //   chunk->add_segment(value_segment);
+    // });
+    _add_segment_to_chunk(chunk, type);
+  }
+  n_cols++;
+}
+
+void Table::_add_segment_to_chunk(std::shared_ptr<Chunk> chunk, std::string type){
+  resolve_data_type(type, [&](const auto data_type_t) {
+      using ColumnDataType = typename decltype(data_type_t)::type;
+      const auto value_segment = std::make_shared<ValueSegment<ColumnDataType>>();
+      chunk->add_segment(value_segment);
+    });
 }
 
 void Table::append(const std::vector<AllTypeVariant>& values) {
-  // Implementation goes here
+  if (chunks.back()->size() == max_chunk_size) {
+    std::shared_ptr<Chunk> chunk = std::make_shared<Chunk>();
+    chunks.push_back(chunk);
+    for( auto type : col_types){
+      // resolve_data_type(type, [&](const auto data_type_t) {
+      //   using ColumnDataType = typename decltype(data_type_t)::type;
+      //   const auto value_segment = std::make_shared<ValueSegment<ColumnDataType>>();
+      //   chunk->add_segment(value_segment);
+      // });
+      _add_segment_to_chunk(chunk, type);
+    }
+  }
+  chunks.back()->append(values);
 }
 
 ColumnCount Table::column_count() const {
-  // Implementation goes here
-  return ColumnCount{0};
+  
+  return ColumnCount{n_cols};
 }
 
 uint64_t Table::row_count() const {
   // Implementation goes here
-  return 0;
+  if(chunks.size() == 0) return 0;
+  int full_chunks_count = chunks.size()-1;
+  return full_chunks_count * max_chunk_size + chunks.back()->size();
 }
 
 ChunkID Table::chunk_count() const {
-  // Implementation goes here
-  return ChunkID{0};
+  uint16_t count = chunks.size();
+  return ChunkID{count};
 }
 
 ColumnID Table::column_id_by_name(const std::string& column_name) const {
   // Implementation goes here
+  auto id = std::find(col_names.begin(), col_names.end(), column_name);
+  if (id != col_names.end()){
+    int index = id - col_names.begin();
+    return ColumnID(index);
+  }else {
+    throw std::runtime_error("no column with this name exists");
+  }
   return ColumnID{0};
 }
 
 ChunkOffset Table::target_chunk_size() const {
   // Implementation goes here
-  return 0;
+  return max_chunk_size;
 }
 
 const std::vector<std::string>& Table::column_names() const {
-  throw std::runtime_error("Implement Table::column_names()");
+  return col_names;
 }
 
 const std::string& Table::column_name(const ColumnID column_id) const {
-  throw std::runtime_error("Implement Table::column_name");
+  return col_names[column_id];
 }
 
 const std::string& Table::column_type(const ColumnID column_id) const {
-  throw std::runtime_error("Implement Table::column_type");
+  return col_types[column_id];
 }
 
-Chunk& Table::get_chunk(ChunkID chunk_id) { throw std::runtime_error("Implement Table::get_chunk"); }
+Chunk& Table::get_chunk(ChunkID chunk_id) { 
+  return *chunks[chunk_id];
+ }
 
-const Chunk& Table::get_chunk(ChunkID chunk_id) const { throw std::runtime_error("Implement Table::get_chunk"); }
+const Chunk& Table::get_chunk(ChunkID chunk_id) const { 
+  return *chunks[chunk_id];
+ }
+
+void Table::print(std::ostream& out = std::cout) const {
+  for (auto chunk : chunks){
+    chunk->print(); 
+  }
+}
 
 }  // namespace opossum
