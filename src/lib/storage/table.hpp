@@ -71,7 +71,7 @@ class Table : private Noncopyable {
   // note this is slow and not thread-safe and should be used for testing purposes only
   void append(const std::vector<AllTypeVariant>& values);
 
-  void print(std::ostream& out =  std::cout) const;
+  void print(std::ostream& out = std::cout) const;
 
  protected:
   const ChunkOffset max_chunk_size;

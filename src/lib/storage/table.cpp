@@ -117,9 +117,13 @@ const Chunk& Table::get_chunk(ChunkID chunk_id) const {
   return *chunks[chunk_id];
  }
 
-void Table::print(std::ostream& out = std::cout) const {
+void Table::print(std::ostream& out) const {
+  for (auto name : col_names) {
+    out << name << "\t\t";
+  }
+  out << "\n---------------------------------\n";
   for (auto chunk : chunks){
-    chunk->print(); 
+    chunk->print();
   }
 }
 

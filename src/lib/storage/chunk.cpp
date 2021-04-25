@@ -46,12 +46,12 @@ ChunkOffset Chunk::size() const {
   else return segments[0]->size();
 }
 
-void Chunk::print(std::ostream& out = std::cout) const {
-  for (ChunkOffset i = 0; i < segments.size(); i++){
-    for (ValueSegment<BaseSegment> segment : segments){
-      std::cout << segment[i] ; 
+void Chunk::print(std::ostream& out) const {
+  for(ChunkOffset i = 0; i < size(); i++) {
+    for(auto segment : segments) {
+      out << (*segment)[i] << "\t|\t";
     }
-    std::cout << "\n"; 
+    out << "\n";
   }
 }
 
