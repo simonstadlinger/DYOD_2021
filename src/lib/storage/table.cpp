@@ -21,7 +21,6 @@ Table::Table(const ChunkOffset target_chunk_size): max_chunk_size { target_chunk
   // Implementation goes here
   //max_chunk_size = target_chunk_size;
   chunks.push_back(std::make_shared<Chunk>());
-  n_cols = 0;
 }
 
 void Table::add_column(const std::string& name, const std::string& type) {
@@ -36,7 +35,6 @@ void Table::add_column(const std::string& name, const std::string& type) {
     // });
     _add_segment_to_chunk(chunk, type);
   }
-  n_cols++;
 }
 
 void Table::_add_segment_to_chunk(std::shared_ptr<Chunk> chunk, std::string type){
@@ -64,8 +62,8 @@ void Table::append(const std::vector<AllTypeVariant>& values) {
 }
 
 ColumnCount Table::column_count() const {
-  
-  return ColumnCount{n_cols};
+  u_int16_t count = col_names.size();
+  return ColumnCount{count};
 }
 
 uint64_t Table::row_count() const {
@@ -89,7 +87,6 @@ ColumnID Table::column_id_by_name(const std::string& column_name) const {
   }else {
     throw std::runtime_error("no column with this name exists");
   }
-  return ColumnID{0};
 }
 
 ChunkOffset Table::target_chunk_size() const {
