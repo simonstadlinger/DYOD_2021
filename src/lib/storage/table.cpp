@@ -59,7 +59,6 @@ ColumnCount Table::column_count() const {
 }
 
 uint64_t Table::row_count() const {
-  // Implementation goes here
   if (chunks.size() == 0) return 0;
   int full_chunks_count = chunks.size() - 1;
   return full_chunks_count * max_chunk_size + chunks.back()->size();
@@ -71,7 +70,6 @@ ChunkID Table::chunk_count() const {
 }
 
 ColumnID Table::column_id_by_name(const std::string& column_name) const {
-  // Implementation goes here
   auto id = std::find(col_names.begin(), col_names.end(), column_name);
   if (id != col_names.end()) {
     int index = id - col_names.begin();
@@ -81,10 +79,7 @@ ColumnID Table::column_id_by_name(const std::string& column_name) const {
   }
 }
 
-ChunkOffset Table::target_chunk_size() const {
-  // Implementation goes here
-  return max_chunk_size;
-}
+ChunkOffset Table::target_chunk_size() const { return max_chunk_size; }
 
 const std::vector<std::string>& Table::column_names() const { return col_names; }
 
@@ -97,12 +92,13 @@ Chunk& Table::get_chunk(ChunkID chunk_id) { return *chunks[chunk_id]; }
 const Chunk& Table::get_chunk(ChunkID chunk_id) const { return *chunks[chunk_id]; }
 
 void Table::print(std::ostream& out) const {
+  int col_size = 20;
   for (auto name : col_names) {
-    out << name << "\t\t";
+    out << name << std::string(col_size - name.length(), ' ');
   }
-  out << "\n---------------------------------\n";
+  out << "\n" << std::string(col_size * column_count(), '-') << "\n";
   for (auto chunk : chunks) {
-    chunk->print();
+    chunk->print(col_size);
   }
 }
 

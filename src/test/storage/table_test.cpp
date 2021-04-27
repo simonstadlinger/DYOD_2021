@@ -28,7 +28,6 @@ TEST_F(StorageTableTest, ChunkCount) {
   t.append({6, "world"});
   t.append({3, "!"});
   EXPECT_EQ(t.chunk_count(), 2u);
-  t.print();
 }
 
 TEST_F(StorageTableTest, GetChunk) {

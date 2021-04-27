@@ -45,6 +45,5 @@ class StorageManager : private Noncopyable {
   StorageManager& operator=(StorageManager&&) = default;
   std::map<std::string, std::shared_ptr<Table>> tables;
   static StorageManager* instance;
-  // Implementation goes here
 };
 }  // namespace opossum
