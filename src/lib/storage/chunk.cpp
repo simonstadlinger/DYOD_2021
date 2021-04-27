@@ -47,7 +47,8 @@ void Chunk::print(int col_size, std::ostream& out) const {
       AllTypeVariant value = (*segment)[i];
       std::stringstream ss;
       ss << value;
-      ss >> line;
+      ss >> line;  // convert value to string regardless of type
+      if ((static_cast<int>(line.length())) > col_size) line.resize(col_size);
       out << line << std::string(col_size - line.length(), ' ');
     }
     out << "\n";

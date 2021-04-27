@@ -94,7 +94,9 @@ const Chunk& Table::get_chunk(ChunkID chunk_id) const { return *chunks[chunk_id]
 void Table::print(std::ostream& out) const {
   int col_size = 20;
   for (auto name : col_names) {
-    out << name << std::string(col_size - name.length(), ' ');
+    std::string value = name;
+    if (static_cast<int>(value.length()) > col_size) value.resize(col_size);
+    out << value << std::string(col_size - value.length(), ' ');
   }
   out << "\n" << std::string(col_size * column_count(), '-') << "\n";
   for (auto chunk : chunks) {
