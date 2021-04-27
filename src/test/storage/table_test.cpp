@@ -77,6 +77,11 @@ TEST_F(StorageTableTest, AddColumn) {
   EXPECT_EQ(t.column_count(), 3u);
 }
 
+TEST_F(StorageTableTest, AddColumnFail) {
+  t.append({42, "Space Traveler"});
+  EXPECT_THROW(t.add_column("col_3", "string"), std::exception);
+}
+
 TEST_F(StorageTableTest, PrivateAddSegment) {
   t.add_column("col_3", "int");
   auto& currentChunk = t.get_chunk(ChunkID{0});

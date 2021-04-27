@@ -22,11 +22,15 @@ Table::Table(const ChunkOffset target_chunk_size) : max_chunk_size{target_chunk_
 }
 
 void Table::add_column(const std::string& name, const std::string& type) {
-  col_names.push_back(name);
-  col_types.push_back(type);
+  if(row_count() > 0) {
+    throw std::exception();
+  } else {
+    col_names.push_back(name);
+    col_types.push_back(type);
 
-  for (auto chunk : chunks) {
-    _add_segment_to_chunk(chunk, type);
+    for (auto chunk : chunks) {
+      _add_segment_to_chunk(chunk, type);
+    }
   }
 }
 
