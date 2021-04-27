@@ -72,4 +72,17 @@ TEST_F(StorageTableTest, GetColumnIdByName) {
 
 TEST_F(StorageTableTest, GetChunkSize) { EXPECT_EQ(t.target_chunk_size(), 2u); }
 
+TEST_F(StorageTableTest, AddColumn) {
+  t.add_column("col_3", "string");
+  EXPECT_EQ(t.column_count(), 3u);
+}
+
+TEST_F(StorageTableTest, PrivateAddSegment) {
+  t.add_column("col_3", "int");
+  auto& currentChunk = t.get_chunk(ChunkID{0});
+  auto lastSegment = currentChunk.get_segment(ColumnID{2});
+  EXPECT_EQ(currentChunk.column_count(), 3u);
+  EXPECT_THROW(lastSegment->append("String"), std::exception);
+}
+
 }  // namespace opossum
