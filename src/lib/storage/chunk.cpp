@@ -29,7 +29,6 @@ void Chunk::append(const std::vector<AllTypeVariant>& values) {
 std::shared_ptr<BaseSegment> Chunk::get_segment(ColumnID column_id) const { return segments[column_id]; }
 
 ColumnCount Chunk::column_count() const {
-  // Implementation goes here
   uint16_t count = segments.size();
   return ColumnCount{count};
 }
@@ -41,10 +40,15 @@ ChunkOffset Chunk::size() const {
     return segments[0]->size();
 }
 
-void Chunk::print(std::ostream& out) const {
+void Chunk::print(int col_size, std::ostream& out) const {
   for (ChunkOffset i = 0; i < size(); i++) {
     for (auto segment : segments) {
-      out << (*segment)[i] << "\t|\t";
+      std::string line;
+      AllTypeVariant value = (*segment)[i];
+      std::stringstream ss;
+      ss << value;
+      ss >> line;
+      out << line << std::string(col_size - line.length(), ' ');
     }
     out << "\n";
   }

@@ -78,7 +78,6 @@ class Table : private Noncopyable {
   std::vector<std::shared_ptr<Chunk>> chunks;
   std::vector<std::string> col_names;
   std::vector<std::string> col_types;
-  // Implementation goes here
 
   void _add_segment_to_chunk(std::shared_ptr<Chunk> chunk, std::string type);
 };
