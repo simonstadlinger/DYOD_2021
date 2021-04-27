@@ -19,15 +19,12 @@ void Chunk::add_segment(std::shared_ptr<BaseSegment> segment) {
 }
 
 void Chunk::append(const std::vector<AllTypeVariant>& values) {
-  // Implementation goes here
-
   DebugAssert(!values.empty(), "");
   DebugAssert(values.size() == segments.size(), "");
 
   int size = segments.size();
-  for(int i = 0; i < size; i++){
-
-    segments[i]->append(values[i]); 
+  for (int i = 0; i < size; i++) {
+    segments[i]->append(values[i]);
   }
 }
 
@@ -42,13 +39,13 @@ ColumnCount Chunk::column_count() const {
 }
 
 ChunkOffset Chunk::size() const {
-  if(segments.empty()) return 0;
+  if (segments.empty()) return 0;
   else return segments[0]->size();
 }
 
 void Chunk::print(std::ostream& out) const {
-  for(ChunkOffset i = 0; i < size(); i++) {
-    for(auto segment : segments) {
+  for (ChunkOffset i = 0; i < size(); i++) {
+    for (auto segment : segments) {
       out << (*segment)[i] << "\t|\t";
     }
     out << "\n";

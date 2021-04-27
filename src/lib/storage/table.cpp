@@ -18,8 +18,6 @@
 namespace opossum {
 
 Table::Table(const ChunkOffset target_chunk_size): max_chunk_size { target_chunk_size} {
-  // Implementation goes here
-  //max_chunk_size = target_chunk_size;
   chunks.push_back(std::make_shared<Chunk>());
 }
 
@@ -27,12 +25,12 @@ void Table::add_column(const std::string& name, const std::string& type) {
   col_names.push_back(name);
   col_types.push_back(type);
 
-  for(auto chunk : chunks){
+  for (auto chunk : chunks) {
     _add_segment_to_chunk(chunk, type);
   }
 }
 
-void Table::_add_segment_to_chunk(std::shared_ptr<Chunk> chunk, std::string type){
+void Table::_add_segment_to_chunk(std::shared_ptr<Chunk> chunk, std::string type) {
   resolve_data_type(type, [&](const auto data_type_t) {
       using ColumnDataType = typename decltype(data_type_t)::type;
       const auto value_segment = std::make_shared<ValueSegment<ColumnDataType>>();
@@ -44,7 +42,7 @@ void Table::append(const std::vector<AllTypeVariant>& values) {
   if (chunks.back()->size() == max_chunk_size) {
     std::shared_ptr<Chunk> chunk = std::make_shared<Chunk>();
     chunks.push_back(chunk);
-    for( auto type : col_types){
+    for (auto type : col_types) {
       _add_segment_to_chunk(chunk, type);
     }
   }
@@ -58,7 +56,7 @@ ColumnCount Table::column_count() const {
 
 uint64_t Table::row_count() const {
   // Implementation goes here
-  if(chunks.size() == 0) return 0;
+  if (chunks.size() == 0) return 0;
   int full_chunks_count = chunks.size()-1;
   return full_chunks_count * max_chunk_size + chunks.back()->size();
 }
@@ -71,10 +69,10 @@ ChunkID Table::chunk_count() const {
 ColumnID Table::column_id_by_name(const std::string& column_name) const {
   // Implementation goes here
   auto id = std::find(col_names.begin(), col_names.end(), column_name);
-  if (id != col_names.end()){
+  if (id != col_names.end()) {
     int index = id - col_names.begin();
     return ColumnID(index);
-  }else {
+  } else {
     throw std::runtime_error("no column with this name exists");
   }
 }
@@ -96,20 +94,20 @@ const std::string& Table::column_type(const ColumnID column_id) const {
   return col_types[column_id];
 }
 
-Chunk& Table::get_chunk(ChunkID chunk_id) { 
+Chunk& Table::get_chunk(ChunkID chunk_id) {
   return *chunks[chunk_id];
- }
+}
 
-const Chunk& Table::get_chunk(ChunkID chunk_id) const { 
+const Chunk& Table::get_chunk(ChunkID chunk_id) const {
   return *chunks[chunk_id];
- }
+}
 
 void Table::print(std::ostream& out) const {
   for (auto name : col_names) {
     out << name << "\t\t";
   }
   out << "\n---------------------------------\n";
-  for (auto chunk : chunks){
+  for (auto chunk : chunks) {
     chunk->print();
   }
 }

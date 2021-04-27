@@ -43,7 +43,7 @@ class Chunk : private Noncopyable {
   void print(std::ostream& out = std::cout) const;
 
  protected:
-  std::vector<std::shared_ptr<BaseSegment>> segments; 
+  std::vector<std::shared_ptr<BaseSegment>> segments;
   // Implementation goes here
 };
 
