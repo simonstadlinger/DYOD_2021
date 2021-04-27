@@ -28,11 +28,6 @@ void Table::add_column(const std::string& name, const std::string& type) {
   col_types.push_back(type);
 
   for(auto chunk : chunks){
-    // resolve_data_type(type, [&](const auto data_type_t) {
-    //   using ColumnDataType = typename decltype(data_type_t)::type;
-    //   const auto value_segment = std::make_shared<ValueSegment<ColumnDataType>>();
-    //   chunk->add_segment(value_segment);
-    // });
     _add_segment_to_chunk(chunk, type);
   }
 }
@@ -50,11 +45,6 @@ void Table::append(const std::vector<AllTypeVariant>& values) {
     std::shared_ptr<Chunk> chunk = std::make_shared<Chunk>();
     chunks.push_back(chunk);
     for( auto type : col_types){
-      // resolve_data_type(type, [&](const auto data_type_t) {
-      //   using ColumnDataType = typename decltype(data_type_t)::type;
-      //   const auto value_segment = std::make_shared<ValueSegment<ColumnDataType>>();
-      //   chunk->add_segment(value_segment);
-      // });
       _add_segment_to_chunk(chunk, type);
     }
   }
