@@ -17,7 +17,7 @@
 
 namespace opossum {
 
-Table::Table(const ChunkOffset target_chunk_size): max_chunk_size { target_chunk_size} {
+Table::Table(const ChunkOffset target_chunk_size) : max_chunk_size{target_chunk_size} {
   chunks.push_back(std::make_shared<Chunk>());
 }
 
@@ -32,10 +32,10 @@ void Table::add_column(const std::string& name, const std::string& type) {
 
 void Table::_add_segment_to_chunk(std::shared_ptr<Chunk> chunk, std::string type) {
   resolve_data_type(type, [&](const auto data_type_t) {
-      using ColumnDataType = typename decltype(data_type_t)::type;
-      const auto value_segment = std::make_shared<ValueSegment<ColumnDataType>>();
-      chunk->add_segment(value_segment);
-    });
+    using ColumnDataType = typename decltype(data_type_t)::type;
+    const auto value_segment = std::make_shared<ValueSegment<ColumnDataType>>();
+    chunk->add_segment(value_segment);
+  });
 }
 
 void Table::append(const std::vector<AllTypeVariant>& values) {
@@ -57,7 +57,7 @@ ColumnCount Table::column_count() const {
 uint64_t Table::row_count() const {
   // Implementation goes here
   if (chunks.size() == 0) return 0;
-  int full_chunks_count = chunks.size()-1;
+  int full_chunks_count = chunks.size() - 1;
   return full_chunks_count * max_chunk_size + chunks.back()->size();
 }
 
@@ -82,25 +82,15 @@ ChunkOffset Table::target_chunk_size() const {
   return max_chunk_size;
 }
 
-const std::vector<std::string>& Table::column_names() const {
-  return col_names;
-}
+const std::vector<std::string>& Table::column_names() const { return col_names; }
 
-const std::string& Table::column_name(const ColumnID column_id) const {
-  return col_names[column_id];
-}
+const std::string& Table::column_name(const ColumnID column_id) const { return col_names[column_id]; }
 
-const std::string& Table::column_type(const ColumnID column_id) const {
-  return col_types[column_id];
-}
+const std::string& Table::column_type(const ColumnID column_id) const { return col_types[column_id]; }
 
-Chunk& Table::get_chunk(ChunkID chunk_id) {
-  return *chunks[chunk_id];
-}
+Chunk& Table::get_chunk(ChunkID chunk_id) { return *chunks[chunk_id]; }
 
-const Chunk& Table::get_chunk(ChunkID chunk_id) const {
-  return *chunks[chunk_id];
-}
+const Chunk& Table::get_chunk(ChunkID chunk_id) const { return *chunks[chunk_id]; }
 
 void Table::print(std::ostream& out) const {
   for (auto name : col_names) {

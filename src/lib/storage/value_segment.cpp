@@ -17,12 +17,12 @@ AllTypeVariant ValueSegment<T>::operator[](const ChunkOffset chunk_offset) const
   if (chunk_offset >= this->size()) {
     throw std::runtime_error("Vector out of bounds");
   }
-    return valuesVector[chunk_offset];
+  return valuesVector[chunk_offset];
 }
 
 template <typename T>
 void ValueSegment<T>::append(const AllTypeVariant& val) {
-  return valuesVector.push_back(type_cast<T> (val));
+  return valuesVector.push_back(type_cast<T>(val));
 }
 
 template <typename T>
