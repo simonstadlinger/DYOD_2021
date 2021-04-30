@@ -51,7 +51,7 @@ namespace opossum {
 //   std::shared_ptr<BaseSegment> col;
 //   resolve_data_type("int", [&](auto type) {
 //     using Type = typename decltype(type)::type;
-//     col = std::make_shared<DictionarySegment<Type>>(vc_str);
+//     col = std::make_shared<DictionarySegment<Type>>(vc_int);
 //   });
 //   auto dict_col = std::dynamic_pointer_cast<opossum::DictionarySegment<int>>(col);
 
