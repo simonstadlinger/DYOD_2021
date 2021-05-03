@@ -18,7 +18,7 @@ void Chunk::add_segment(std::shared_ptr<BaseSegment> segment) { segments.push_ba
 
 void Chunk::append(const std::vector<AllTypeVariant>& values) {
   DebugAssert(!values.empty(), "Appending an empty row");
-  DebugAssert(values.size() == segments.size(), "");
+  DebugAssert(values.size() == segments.size(), "Invalid number of columns to be inserted");
 
   int size = segments.size();
   for (int i = 0; i < size; i++) {
