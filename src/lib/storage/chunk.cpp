@@ -17,7 +17,7 @@ namespace opossum {
 void Chunk::add_segment(std::shared_ptr<BaseSegment> segment) { segments.push_back(segment); }
 
 void Chunk::append(const std::vector<AllTypeVariant>& values) {
-  DebugAssert(!values.empty(), "");
+  DebugAssert(!values.empty(), "Appending an empty row");
   DebugAssert(values.size() == segments.size(), "");
 
   int size = segments.size();
