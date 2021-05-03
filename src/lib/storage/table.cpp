@@ -17,20 +17,17 @@
 
 namespace opossum {
 
-Table::Table(const ChunkOffset target_chunk_size) : max_chunk_size{target_chunk_size} {
-  chunks.push_back(std::make_shared<Chunk>());
+Table::Table(const ChunkOffset target_chunk_size) : _max_chunk_size{target_chunk_size} {
+  _chunks.push_back(std::make_shared<Chunk>());
 }
 
 void Table::add_column(const std::string& name, const std::string& type) {
-  DebugAssert(row_count() == 0, "The chunk is not empty: no modification of the colyumn layout possible");
-    throw std::exception();
-  } else {
-    col_names.push_back(name);
-    col_types.push_back(type);
+  Assert(row_count() == 0, "The chunk is not empty: no modification of the column layout possible");
+  _col_names.push_back(name);
+  _col_types.push_back(type);
 
-    for (auto chunk : chunks) {
-      _add_segment_to_chunk(chunk, type);
-    }
+  for (auto chunk : _chunks) {
+     _add_segment_to_chunk(chunk, type);
   }
 }
 
@@ -43,63 +40,65 @@ void Table::_add_segment_to_chunk(std::shared_ptr<Chunk> chunk, std::string type
 }
 
 void Table::append(const std::vector<AllTypeVariant>& values) {
-  if (chunks.back()->size() == max_chunk_size) {
-    std::shared_ptr<Chunk> chunk = std::make_shared<Chunk>();
-    chunks.push_back(chunk);
-    for (auto type : col_types) {
-      _add_segment_to_chunk(chunk, type);
+  if (_chunks.back()->size() == _max_chunk_size) {
+    // std::shared_ptr<Chunk> chunk = std::make_shared<Chunk>();
+    // _chunks.push_back(chunk);
+    _chunks.emplace_back();
+    for (auto type : _col_types) {
+      // _add_segment_to_chunk(chunk, type);
+       _add_segment_to_chunk(_chunks.back(), type);
     }
   }
-  chunks.back()->append(values);
+  _chunks.back()->append(values);
 }
 
 ColumnCount Table::column_count() const {
-  u_int16_t count = col_names.size();
+  u_int16_t count = _col_names.size();
   return ColumnCount{count};
 }
 
 uint64_t Table::row_count() const {
-  if (chunks.size() == 0) return 0;
-  int full_chunks_count = chunks.size() - 1;
-  return full_chunks_count * max_chunk_size + chunks.back()->size();
+  if (_chunks.size() == 0) return 0;
+  int full_chunks_count = _chunks.size() - 1;
+  return full_chunks_count * _max_chunk_size + _chunks.back()->size();
 }
 
 ChunkID Table::chunk_count() const {
-  uint16_t count = chunks.size();
+  uint16_t count = _chunks.size();
   return ChunkID{count};
 }
-
+//TODO: Refactor with proper assert.
 ColumnID Table::column_id_by_name(const std::string& column_name) const {
-  auto id = std::find(col_names.begin(), col_names.end(), column_name);
-  if (id != col_names.end()) {
-    int index = id - col_names.begin();
+  auto id = std::find(_col_names.begin(), _col_names.end(), column_name);
+  if (id != _col_names.end()) {
+    int index = id - _col_names.begin();
     return ColumnID(index);
   } else {
     throw std::runtime_error("no column with this name exists");
   }
 }
 
-ChunkOffset Table::target_chunk_size() const { return max_chunk_size; }
+ChunkOffset Table::target_chunk_size() const { return _max_chunk_size; }
 
-const std::vector<std::string>& Table::column_names() const { return col_names; }
+const std::vector<std::string>& Table::column_names() const { return _col_names; }
 
-const std::string& Table::column_name(const ColumnID column_id) const { return col_names[column_id]; }
+const std::string& Table::column_name(const ColumnID column_id) const { return _col_names.at(column_id); }
 
-const std::string& Table::column_type(const ColumnID column_id) const { return col_types.at(column_id); }
+const std::string& Table::column_type(const ColumnID column_id) const { return _col_types.at(column_id); }
 
-Chunk& Table::get_chunk(ChunkID chunk_id) { return *chunks[chunk_id]; }
+Chunk& Table::get_chunk(ChunkID chunk_id) { return *_chunks[chunk_id]; }
 
-const Chunk& Table::get_chunk(ChunkID chunk_id) const { return *chunks[chunk_id]; }
+const Chunk& Table::get_chunk(ChunkID chunk_id) const { return *_chunks.at(chunk_id); }
 
 void Table::print(std::ostream& out) const {
   int col_size = 20;
-  for (auto name : col_names) {
+  for (auto name : _col_names) {
     std::string value = name;
     if (static_cast<int>(value.length()) > col_size) value.resize(col_size);
     out << value << std::string(col_size - value.length(), ' ');
   }
   out << "\n" << std::string(col_size * column_count(), '-') << "\n";
-  for (auto chunk : chunks) {
+  for (auto chunk : _chunks) {
     chunk->print(col_size);
   }
 }

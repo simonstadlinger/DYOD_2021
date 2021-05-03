@@ -17,12 +17,11 @@ namespace opossum {
 void Chunk::add_segment(std::shared_ptr<BaseSegment> segment) { segments.push_back(segment); }
 
 void Chunk::append(const std::vector<AllTypeVariant>& values) {
-  DebugAssert(!values.empty(), "Appending an empty row");
-  DebugAssert(values.size() == segments.size(), "Invalid number of columns to be inserted");
+  Assert(values.size() == segments.size(), "Invalid number of columns to be inserted");
 
   int size = segments.size();
-  for (int i = 0; i < size; i++) {
-    segments[i]->append(values[i]);
+  for (int column_index = 0; column_index < size; column_index++) {
+    segments[column_index]->append(values[column_index]);
   }
 }
 
@@ -34,11 +33,8 @@ ColumnCount Chunk::column_count() const {
 }
 
 ChunkOffset Chunk::size() const {
-  if (segments.empty())
-    return 0;
-  else
-    return segments[0]->size();
-}
+  return segments.empty() ? 0: segments[0]->size(); 
+  }
 
 void Chunk::print(int col_size, std::ostream& out) const {
   for (ChunkOffset i = 0; i < size(); i++) {
