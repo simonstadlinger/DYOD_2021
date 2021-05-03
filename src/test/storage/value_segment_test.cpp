@@ -47,4 +47,19 @@ TEST_F(StorageValueSegmentTest, AddValueOfDifferentType) {
   EXPECT_THROW(double_value_segment.append("Hi"), std::exception);
 }
 
+TEST_F(StorageValueSegmentTest, GetAtPosition) {
+  int_value_segment.append(0);
+  int_value_segment.append(1);
+  int_value_segment.append(2);
+
+  EXPECT_EQ(type_cast<int>(int_value_segment[0]), 0);
+  EXPECT_EQ(type_cast<int>(int_value_segment[1]), 1);
+  EXPECT_EQ(type_cast<int>(int_value_segment[2]), 2);
+
+  if constexpr (HYRISE_DEBUG) {
+    EXPECT_THROW(int_value_segment[-1], std::exception);
+    EXPECT_THROW(int_value_segment[3], std::exception);
+  }
+}
+
 }  // namespace opossum
