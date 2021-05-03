@@ -85,7 +85,7 @@ const std::vector<std::string>& Table::column_names() const { return col_names; 
 
 const std::string& Table::column_name(const ColumnID column_id) const { return col_names[column_id]; }
 
-const std::string& Table::column_type(const ColumnID column_id) const { return col_types[column_id]; }
+const std::string& Table::column_type(const ColumnID column_id) const { return col_types.at(column_id); }
 
 Chunk& Table::get_chunk(ChunkID chunk_id) { return *chunks[chunk_id]; }
 
