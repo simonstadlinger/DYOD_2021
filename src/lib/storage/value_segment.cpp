@@ -14,10 +14,7 @@ namespace opossum {
 
 template <typename T>
 AllTypeVariant ValueSegment<T>::operator[](const ChunkOffset chunk_offset) const {
-  if (chunk_offset >= this->size()) {
-    throw std::runtime_error("Vector out of bounds");
-  }
-  return valuesVector[chunk_offset];
+  return valuesVector.at(chunk_offset);
 }
 
 template <typename T>
