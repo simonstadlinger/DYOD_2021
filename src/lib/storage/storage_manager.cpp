@@ -14,7 +14,10 @@ StorageManager& StorageManager::get() {
   return sm;
 }
 
-void StorageManager::add_table(const std::string& name, std::shared_ptr<Table> table) { tables[name] = table; }
+void StorageManager::add_table(const std::string& name, std::shared_ptr<Table> table) {
+  DebugAssert(!tables.contains(name), "A table with provided name already exists");
+  tables[name] = table;  
+}
 
 void StorageManager::drop_table(const std::string& name) {
   if (tables.at(name) != NULL) {
