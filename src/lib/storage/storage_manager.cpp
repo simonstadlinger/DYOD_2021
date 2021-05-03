@@ -28,7 +28,10 @@ void StorageManager::drop_table(const std::string& name) {
 }
 
 std::shared_ptr<Table> StorageManager::get_table(const std::string& name) const {
-  if (tables.at(name) != NULL) return tables.at(name);
+  if (tables.contains(name)){
+    return tables.at(name);
+  }
+  throw std::runtime_error("No table with the provided name");
   return nullptr;
 }
 
