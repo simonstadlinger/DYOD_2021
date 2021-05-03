@@ -22,7 +22,7 @@ Table::Table(const ChunkOffset target_chunk_size) : max_chunk_size{target_chunk_
 }
 
 void Table::add_column(const std::string& name, const std::string& type) {
-  if (row_count() > 0) {
+  DebugAssert(row_count() == 0, "The chunk is not empty: no modification of the colyumn layout possible");
     throw std::exception();
   } else {
     col_names.push_back(name);
