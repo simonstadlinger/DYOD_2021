@@ -20,7 +20,7 @@ void StorageManager::add_table(const std::string& name, std::shared_ptr<Table> t
 }
 
 void StorageManager::drop_table(const std::string& name) {
-  if (tables.at(name) != NULL) {
+  if (tables.contains(name)) {
     tables.erase(name);
   } else {
     throw std::runtime_error("no such table");
