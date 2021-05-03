@@ -26,7 +26,7 @@ void Chunk::append(const std::vector<AllTypeVariant>& values) {
   }
 }
 
-std::shared_ptr<BaseSegment> Chunk::get_segment(ColumnID column_id) const { return segments[column_id]; }
+std::shared_ptr<BaseSegment> Chunk::get_segment(ColumnID column_id) const { return segments.at(column_id); }
 
 ColumnCount Chunk::column_count() const {
   uint16_t count = segments.size();
