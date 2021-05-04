@@ -14,31 +14,31 @@
 
 namespace opossum {
 
-void Chunk::add_segment(std::shared_ptr<BaseSegment> segment) { segments.push_back(segment); }
+void Chunk::add_segment(std::shared_ptr<BaseSegment> segment) { _segments.push_back(segment); }
 
 void Chunk::append(const std::vector<AllTypeVariant>& values) {
-  Assert(values.size() == segments.size(), "Invalid number of columns to be inserted");
+  Assert(values.size() == _segments.size(), "Invalid number of columns to be inserted");
 
-  int size = segments.size();
+  int size = _segments.size();
   for (int column_index = 0; column_index < size; column_index++) {
-    segments[column_index]->append(values[column_index]);
+    _segments[column_index]->append(values[column_index]);
   }
 }
 
-std::shared_ptr<BaseSegment> Chunk::get_segment(ColumnID column_id) const { return segments.at(column_id); }
+std::shared_ptr<BaseSegment> Chunk::get_segment(ColumnID column_id) const { return _segments.at(column_id); }
 
 ColumnCount Chunk::column_count() const {
-  uint16_t count = segments.size();
+  uint16_t count = _segments.size();
   return ColumnCount{count};
 }
 
 ChunkOffset Chunk::size() const {
-  return segments.empty() ? 0: segments[0]->size(); 
+  return _segments.empty() ? 0: _segments[0]->size(); 
   }
 
 void Chunk::print(int col_size, std::ostream& out) const {
   for (ChunkOffset i = 0; i < size(); i++) {
-    for (auto segment : segments) {
+    for (auto segment : _segments) {
       std::string line;
       AllTypeVariant value = (*segment)[i];
       std::stringstream ss;

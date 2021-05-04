@@ -17,7 +17,7 @@ class BaseIndex;
 class BaseSegment;
 
 // A chunk is a horizontal partition of a table.
-// For each column in the table, it holds one segment. The segments across all chunks constitute the column.
+// For each column in the table, it holds one segment. The _segments across all chunks constitute the column.
 //
 // Find more information about this in our wiki: https://github.com/hyrise/hyrise/wiki/chunk-concept
 class Chunk : private Noncopyable {
@@ -40,10 +40,11 @@ class Chunk : private Noncopyable {
   // Returns the segment at a given position
   std::shared_ptr<BaseSegment> get_segment(ColumnID column_id) const;
 
+  // Prints chunk
   void print(int col_size, std::ostream& out = std::cout) const;
 
  protected:
-  std::vector<std::shared_ptr<BaseSegment>> segments;
+  std::vector<std::shared_ptr<BaseSegment>> _segments;
 };
 
 }  // namespace opossum
