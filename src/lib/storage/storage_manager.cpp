@@ -14,18 +14,14 @@ StorageManager& StorageManager::get() {
   return sm;
 }
 
-void StorageManager::add_table(const std::string& name, std::shared_ptr<Table> table) {
-  _tables.insert({name, table});
-}
+void StorageManager::add_table(const std::string& name, std::shared_ptr<Table> table) { _tables.insert({name, table}); }
 
 void StorageManager::drop_table(const std::string& name) {
   const auto dropped_table_count = _tables.erase(name);
   Assert(dropped_table_count == 1, "Table could not be removed");
 }
 
-std::shared_ptr<Table> StorageManager::get_table(const std::string& name) const {
-    return _tables.at(name);
-}
+std::shared_ptr<Table> StorageManager::get_table(const std::string& name) const { return _tables.at(name); }
 
 bool StorageManager::has_table(const std::string& name) const { return _tables.contains(name); }
 

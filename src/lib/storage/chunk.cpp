@@ -32,9 +32,7 @@ ColumnCount Chunk::column_count() const {
   return ColumnCount{count};
 }
 
-ChunkOffset Chunk::size() const {
-  return _segments.empty() ? 0: _segments[0]->size(); 
-  }
+ChunkOffset Chunk::size() const { return _segments.empty() ? 0 : _segments[0]->size(); }
 
 void Chunk::print(int col_size, std::ostream& out) const {
   for (ChunkOffset i = 0; i < size(); i++) {

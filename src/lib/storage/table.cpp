@@ -27,7 +27,7 @@ void Table::add_column(const std::string& name, const std::string& type) {
   _col_types.push_back(type);
 
   for (auto chunk : _chunks) {
-     _add_segment_to_chunk(chunk, type);
+    _add_segment_to_chunk(chunk, type);
   }
 }
 
@@ -44,7 +44,7 @@ void Table::append(const std::vector<AllTypeVariant>& values) {
     std::shared_ptr<Chunk> chunk = std::make_shared<Chunk>();
     _chunks.push_back(chunk);
     for (auto type : _col_types) {
-       _add_segment_to_chunk(chunk, type);
+      _add_segment_to_chunk(chunk, type);
     }
   }
   _chunks.back()->append(values);
