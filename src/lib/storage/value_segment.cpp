@@ -27,6 +27,12 @@ ChunkOffset ValueSegment<T>::size() const {
   return _values.size();
 }
 
+template <typename T>
+size_t ValueSegment<T>::estimate_memory_usage() const {
+  // Implementation goes here
+  return 0;
+}
+
 EXPLICITLY_INSTANTIATE_DATA_TYPES(ValueSegment);
 
 }  // namespace opossum

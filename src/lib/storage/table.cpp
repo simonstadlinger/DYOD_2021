@@ -98,4 +98,6 @@ void Table::print(std::ostream& out) const {
   }
 }
 
+void Table::compress_chunk(ChunkID chunk_id) { throw std::runtime_error("Implement Table::compress_chunk"); }
+
 }  // namespace opossum

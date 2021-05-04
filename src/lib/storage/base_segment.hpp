@@ -28,5 +28,8 @@ class BaseSegment : private Noncopyable {
 
   // returns the number of values
   virtual ChunkOffset size() const = 0;
+
+  // returns the calculated memory usage
+  virtual size_t estimate_memory_usage() const = 0;
 };
 }  // namespace opossum

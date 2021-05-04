@@ -73,6 +73,9 @@ class Table : private Noncopyable {
 
   void print(std::ostream& out = std::cout) const;
 
+  // compresses a ValueColumn into a DictionaryColumn
+  void compress_chunk(ChunkID chunk_id);
+
  protected:
   const ChunkOffset _max_chunk_size;
   std::vector<std::shared_ptr<Chunk>> _chunks;

@@ -39,14 +39,6 @@ After building `hyriseCoverage`, `./scripts/coverage.sh <build dir>` will print 
 
 *Supports only clang on MacOS and only gcc on linux*
 
-### AddressSanitizer
-`cmake -DENABLE_ADDR_UB_SANITIZATION=ON` will generate Makefiles with AddressSanitizer and Undefined Behavior options. will build Hyrise with enabled AddressSanitizer and Undefined Behavior options and execute all available tests.
-It will fail on the first detected error and will print a summary.
-To convert addresses to actual source code locations, make sure llvm-symbolizer is installed (included in the llvm package) and is available in `$PATH`.
-To specify a custom location for the symbolizer, set `$ASAN_SYMBOLIZER_PATH` to the path of the executable.
-This seems to work out of the box on macOS - If not, make sure to have llvm installed.
-The binary can be executed with `LSAN_OPTIONS=suppressions=asan-ignore.txt ./<YourBuildDirectory>/hyriseAsan`.
-
 
 ### Address/UndefinedBehavior Sanitizers
 `cmake -DENABLE_ADDR_UB_SANITIZATION=ON` will generate Makefiles with AddressSanitizer and Undefined Behavior options.
