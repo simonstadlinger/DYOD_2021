@@ -26,8 +26,6 @@ class BaseSegment : private Noncopyable {
   // appends the value at the end of the segment
   virtual void append(const AllTypeVariant& val) = 0;
 
-  virtual const std::vector<AllTypeVariant>& values() const = 0;
-
   // returns the number of values
   virtual ChunkOffset size() const = 0;
 

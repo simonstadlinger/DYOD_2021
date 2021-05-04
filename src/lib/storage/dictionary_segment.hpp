@@ -25,8 +25,8 @@ class DictionarySegment : public BaseSegment {
   /**
    * Creates a Dictionary segment from a given value segment.
    */
-  explicit DictionarySegment(const std::shared_ptr<BaseSegment>& base_segment) {
-    auto values = base_segment->values();
+  explicit DictionarySegment(const std::shared_ptr<BaseSegment>& baseSegment) {
+
   }
 
   // SEMINAR INFORMATION: Since most of these methods depend on the template parameter, you will have to implement

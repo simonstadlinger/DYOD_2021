@@ -62,6 +62,19 @@ TEST_F(StorageValueSegmentTest, GetAtPosition) {
   }
 }
 
+TEST_F(StorageValueSegmentTest, GetAllValues) {
+  int_value_segment.append(0);
+  int_value_segment.append(1);
+  int_value_segment.append(2);
+
+  const auto& allValues = int_value_segment.values();
+
+  EXPECT_EQ(type_cast<int>(allValues.at(0)),0);
+  EXPECT_EQ(type_cast<int>(allValues.at(1)),1);
+  EXPECT_EQ(type_cast<int>(allValues.at(2)),2);
+  EXPECT_THROW(type_cast<int>(allValues.at(3)), std::exception);
+}
+
 // TEST_F(StorageValueSegmentTest, MemoryUsage) {
 //   int_value_segment.append(1);
 //   EXPECT_EQ(int_value_segment.estimate_memory_usage(), size_t{4});
