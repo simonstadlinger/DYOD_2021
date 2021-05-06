@@ -100,12 +100,6 @@ TEST_F(StorageDictionarySegmentTest, GetOperator) {
 }
 
 TEST_F(StorageDictionarySegmentTest, ValueByValueID) {
-  // vc_str->append("Bill");
-  // vc_str->append("Steve");
-  // vc_str->append("Alexander");
-  // vc_str->append("Steve");
-
-  // auto dict_col = compressStringValueSegment(vc_str);
 
   for (int i = 0; i <= 10; i += 2) vc_int->append(i);
 
@@ -115,7 +109,5 @@ TEST_F(StorageDictionarySegmentTest, ValueByValueID) {
   auto actualValue = dict_col->value_by_value_id(dict_col->lower_bound(2));
   EXPECT_EQ(2, actualValue );
 }
-
-// TODO(student): You should add some more tests here (full coverage would be appreciated) and possibly in other files.
 
 }  // namespace opossum
