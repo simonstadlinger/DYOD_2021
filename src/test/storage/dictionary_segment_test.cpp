@@ -110,4 +110,5 @@ TEST_F(StorageDictionarySegmentTest, ValueByValueID) {
   EXPECT_EQ(2, actualValue );
 }
 
+
 }  // namespace opossum

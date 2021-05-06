@@ -67,7 +67,7 @@ class DictionarySegment : public BaseSegment {
   // returns the first value ID that refers to a value >= the search value
   // returns INVALID_VALUE_ID if all values are smaller than the search value
   ValueID lower_bound(T value) const {
-    for(ValueID dictionary_index = (ValueID) 0; dictionary_index < _dictionary->size(); ++dictionary_index ) {
+    for(ValueID dictionary_index = ValueID{0}; dictionary_index < _dictionary->size(); ++dictionary_index ) {
       if(_dictionary->at(dictionary_index) >= value) {
         return dictionary_index;
       }
@@ -78,13 +78,13 @@ class DictionarySegment : public BaseSegment {
 
   // same as lower_bound(T), but accepts an AllTypeVariant
   ValueID lower_bound(const AllTypeVariant& value) const {
-      return lower_bound(type_cast<T>(value));
+      return lower_bound(static_cast<T>(value));
   };
 
   // returns the first value ID that refers to a value > the search value
   // returns INVALID_VALUE_ID if all values are smaller than or equal to the search value
   ValueID upper_bound(T value) const {
-    for(ValueID dictionary_index = (ValueID) 0; dictionary_index < _dictionary->size(); ++dictionary_index ) {
+    for(ValueID dictionary_index = ValueID{0} ; dictionary_index < _dictionary->size(); ++dictionary_index ) {
       if(_dictionary->at(dictionary_index) > value) {
         return dictionary_index;
       }
@@ -95,7 +95,7 @@ class DictionarySegment : public BaseSegment {
 
   // same as upper_bound(T), but accepts an AllTypeVariant
   ValueID upper_bound(const AllTypeVariant& value) const {
-      return upper_bound(type_cast<T>(value));
+      return upper_bound(static_cast<T>(value));
   };
 
   // return the number of _dictionary (dictionary entries)
