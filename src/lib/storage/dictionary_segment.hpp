@@ -28,8 +28,7 @@ class DictionarySegment : public BaseSegment {
   explicit DictionarySegment(const std::shared_ptr<BaseSegment>& baseSegment) {
     auto valueSegment = std::static_pointer_cast<ValueSegment<T>>(baseSegment);
 
-    _build_dictionary(valueSegment->values());
-    _build_attribute_vector(valueSegment->values());
+    _build_compressed_dictionary(valueSegment->values());
   }
 
   // SEMINAR INFORMATION: Since most of these methods depend on the template parameter, you will have to implement
@@ -37,7 +36,7 @@ class DictionarySegment : public BaseSegment {
 
   // return the value at a certain position. If you want to write efficient operators, back off!
   AllTypeVariant operator[](const ChunkOffset chunk_offset) const {
-    return type_cast<AllTypeVariant>(_dictionary->at(_attribute_vector->at(chunk_offset)));
+    return static_cast<AllTypeVariant>(_dictionary->at(_attribute_vector->at(chunk_offset)));
   };
 
   // return the value at a certain position.
@@ -47,7 +46,7 @@ class DictionarySegment : public BaseSegment {
 
   // dictionary segments are immutable
   void append(const AllTypeVariant& val){
-      throw "Dictionary segments are immutable. You shall not append anything.";
+      throw std::runtime_error("Dictionary segments are immutable. You shall not append anything.");
   };
 
   // returns an underlying dictionary
@@ -110,27 +109,34 @@ class DictionarySegment : public BaseSegment {
   };
 
   // returns the calculated memory usage
-  size_t estimate_memory_usage() const final;
+  size_t estimate_memory_usage() const final {
+      return 0;
+  };
 
  protected:
   std::shared_ptr<std::vector<T>> _dictionary;
   std::shared_ptr<std::vector<uint32_t>> _attribute_vector;
 
-  void _build_dictionary(std::shared_ptr<T>& values) {
-    _dictionary = std::copy(values);
+  void _build_compressed_dictionary(const std::vector<T>& values) {
+    auto raw_dictionary = std::move(values);
+    std::vector<T> raw_values = raw_dictionary;
 
-    std::sort(_dictionary.begin(), _dictionary.end());
-    _dictionary.erase(std::unique(_dictionary.begin(), _dictionary.end()), _dictionary.end());
+    std::sort(raw_dictionary.begin(), raw_dictionary.end());
+    raw_dictionary.erase(std::unique(raw_dictionary.begin(), raw_dictionary.end()), raw_dictionary.end());
+
+    _dictionary = std::make_shared<std::vector<T>>(raw_dictionary);
+
+    _build_attribute_vector(raw_dictionary, raw_values);
   }
 
-  void _build_attribute_vector(std::vector<T>& all_values) {
+  void _build_attribute_vector(std::vector<T>& raw_dictionary, std::vector<T>& all_values) {
     std::vector<uint32_t> raw_vector{};
     raw_vector.reserve(all_values.size());
 
-    for(int value_index = 0; value_index < all_values.size(); ++value_index) {
-      auto dictionary_iterator = std::find(_dictionary.begin(), _dictionary.end(), all_values[value_index]);
-      uint32_t dictionary_index = dictionary_iterator - _dictionary.begin();
-      raw_vector[value_index] = dictionary_index;
+    for(auto value: all_values) {
+      auto dictionary_iterator = std::find(raw_dictionary.begin(), raw_dictionary.end(), value);
+      uint32_t dictionary_index = dictionary_iterator - raw_dictionary.begin();
+      raw_vector.push_back(dictionary_index);
     }
 
     _attribute_vector = std::make_shared<std::vector<uint32_t>>(raw_vector);

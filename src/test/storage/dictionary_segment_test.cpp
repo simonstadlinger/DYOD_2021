@@ -16,6 +16,27 @@ class StorageDictionarySegmentTest : public ::testing::Test {
   std::shared_ptr<opossum::ValueSegment<std::string>> vc_str = std::make_shared<opossum::ValueSegment<std::string>>();
 };
 
+std::shared_ptr<DictionarySegment<std::string>> compressStringValueSegment(std::shared_ptr<opossum::ValueSegment<std::string>> value_segment) {
+  std::shared_ptr<BaseSegment> col;
+  resolve_data_type("string", [&](auto type) {
+    using Type = typename decltype(type)::type;
+    col = std::make_shared<DictionarySegment<Type>>(value_segment);
+  });
+
+  return std::dynamic_pointer_cast<DictionarySegment<std::string>>(col);
+}
+
+std::shared_ptr<DictionarySegment<int>> compressIntValueSegment(std::shared_ptr<opossum::ValueSegment<int>> value_segment) {
+  std::shared_ptr<BaseSegment> col;
+  resolve_data_type("int", [&](auto type) {
+    using Type = typename decltype(type)::type;
+    col = std::make_shared<DictionarySegment<Type>>(value_segment);
+  });
+
+  return std::dynamic_pointer_cast<DictionarySegment<int>>(col);
+}
+
+
 TEST_F(StorageDictionarySegmentTest, CompressSegmentString) {
   vc_str->append("Bill");
   vc_str->append("Steve");
@@ -24,12 +45,7 @@ TEST_F(StorageDictionarySegmentTest, CompressSegmentString) {
   vc_str->append("Hasso");
   vc_str->append("Bill");
 
-  std::shared_ptr<BaseSegment> col;
-  resolve_data_type("string", [&](auto type) {
-    using Type = typename decltype(type)::type;
-    col = std::make_shared<DictionarySegment<Type>>(vc_str);
-  });
-  auto dict_col = std::dynamic_pointer_cast<opossum::DictionarySegment<std::string>>(col);
+  auto dict_col = compressStringValueSegment(vc_str);
 
   // Test attribute_vector size
   EXPECT_EQ(dict_col->size(), 6u);
@@ -48,12 +64,7 @@ TEST_F(StorageDictionarySegmentTest, CompressSegmentString) {
 TEST_F(StorageDictionarySegmentTest, LowerUpperBound) {
   for (int i = 0; i <= 10; i += 2) vc_int->append(i);
 
-  std::shared_ptr<BaseSegment> col;
-  resolve_data_type("int", [&](auto type) {
-    using Type = typename decltype(type)::type;
-    col = std::make_shared<DictionarySegment<Type>>(vc_int);
-  });
-  auto dict_col = std::dynamic_pointer_cast<opossum::DictionarySegment<int>>(col);
+  auto dict_col = compressIntValueSegment(vc_int);
 
   EXPECT_EQ(dict_col->lower_bound(4), (opossum::ValueID)2);
   EXPECT_EQ(dict_col->upper_bound(4), (opossum::ValueID)3);
@@ -64,6 +75,31 @@ TEST_F(StorageDictionarySegmentTest, LowerUpperBound) {
   EXPECT_EQ(dict_col->lower_bound(15), opossum::INVALID_VALUE_ID);
   EXPECT_EQ(dict_col->upper_bound(15), opossum::INVALID_VALUE_ID);
 }
+
+TEST_F(StorageDictionarySegmentTest, ImpossibleAppend) {
+  for (int i = 0; i <= 10; i += 2) vc_int->append(i);
+
+  auto dict_col = compressIntValueSegment(vc_int);
+
+  EXPECT_THROW(dict_col->append(11), std::runtime_error);
+}
+
+TEST_F(StorageDictionarySegmentTest, GetOperator) {
+  vc_str->append("Bill");
+  vc_str->append("Steve");
+  vc_str->append("Alexander");
+  vc_str->append("Steve");
+
+  auto dict_col = compressStringValueSegment(vc_str);
+
+  EXPECT_EQ((*dict_col).get(0), "Bill");
+  EXPECT_EQ((*dict_col).get(1), "Steve");
+  EXPECT_EQ((*dict_col).get(2), "Alexander");
+  EXPECT_EQ((*dict_col).get(3), "Steve");
+
+}
+
+
 
 // TODO(student): You should add some more tests here (full coverage would be appreciated) and possibly in other files.
 
