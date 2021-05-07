@@ -41,7 +41,7 @@ class DictionarySegment : public BaseSegment {
 
   // return the value at a certain position.
   T get(const size_t chunk_offset) const {
-      return _dictionary->at(_attribute_vector->at(chunk_offset));
+      return value_by_id(_attribute_vector->at(chunk_offset));
   };
 
   // dictionary segments are immutable
