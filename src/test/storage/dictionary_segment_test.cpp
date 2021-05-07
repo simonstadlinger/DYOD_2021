@@ -1,19 +1,20 @@
 #include <memory>
 #include <string>
 
+#include "../base_test.hpp"
 #include "gtest/gtest.h"
 
-#include "../../lib/resolve_type.hpp"
-#include "../../lib/storage/base_segment.hpp"
-#include "../../lib/storage/dictionary_segment.hpp"
-#include "../../lib/storage/value_segment.hpp"
+#include "resolve_type.hpp"
+#include "storage/base_segment.hpp"
+#include "storage/dictionary_segment.hpp"
+#include "storage/value_segment.hpp"
 
 namespace opossum {
 
-// class StorageDictionarySegmentTest : public ::testing::Test {
+// class StorageDictionarySegmentTest : public BaseTest {
 //  protected:
-//   std::shared_ptr<opossum::ValueSegment<int>> vc_int = std::make_shared<opossum::ValueSegment<int>>();
-//   std::shared_ptr<opossum::ValueSegment<std::string>> vc_str = std::make_shared<opossum::ValueSegment<std::string>>();
+//   std::shared_ptr<ValueSegment<int>> vc_int = std::make_shared<ValueSegment<int>>();
+//   std::shared_ptr<ValueSegment<std::string>> vc_str = std::make_shared<ValueSegment<std::string>>();
 // };
 
 // TEST_F(StorageDictionarySegmentTest, CompressSegmentString) {
@@ -29,7 +30,8 @@ namespace opossum {
 //     using Type = typename decltype(type)::type;
 //     col = std::make_shared<DictionarySegment<Type>>(vc_str);
 //   });
-//   auto dict_col = std::dynamic_pointer_cast<opossum::DictionarySegment<std::string>>(col);
+
+//   auto dict_col = std::dynamic_pointer_cast<DictionarySegment<std::string>>(col);
 
 //   // Test attribute_vector size
 //   EXPECT_EQ(dict_col->size(), 6u);
@@ -53,16 +55,16 @@ namespace opossum {
 //     using Type = typename decltype(type)::type;
 //     col = std::make_shared<DictionarySegment<Type>>(vc_int);
 //   });
-//   auto dict_col = std::dynamic_pointer_cast<opossum::DictionarySegment<int>>(col);
+//   auto dict_col = std::dynamic_pointer_cast<DictionarySegment<int>>(col);
 
-//   EXPECT_EQ(dict_col->lower_bound(4), (opossum::ValueID)2);
-//   EXPECT_EQ(dict_col->upper_bound(4), (opossum::ValueID)3);
+//   EXPECT_EQ(dict_col->lower_bound(4), (ValueID)2);
+//   EXPECT_EQ(dict_col->upper_bound(4), (ValueID)3);
 
-//   EXPECT_EQ(dict_col->lower_bound(5), (opossum::ValueID)3);
-//   EXPECT_EQ(dict_col->upper_bound(5), (opossum::ValueID)3);
+//   EXPECT_EQ(dict_col->lower_bound(5), (ValueID)3);
+//   EXPECT_EQ(dict_col->upper_bound(5), (ValueID)3);
 
-//   EXPECT_EQ(dict_col->lower_bound(15), opossum::INVALID_VALUE_ID);
-//   EXPECT_EQ(dict_col->upper_bound(15), opossum::INVALID_VALUE_ID);
+//   EXPECT_EQ(dict_col->lower_bound(15), INVALID_VALUE_ID);
+//   EXPECT_EQ(dict_col->upper_bound(15), INVALID_VALUE_ID);
 // }
 
 // TODO(student): You should add some more tests here (full coverage would be appreciated) and possibly in other files.
