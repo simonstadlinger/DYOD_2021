@@ -69,7 +69,7 @@ class DictionarySegment : public BaseSegment {
   ValueID lower_bound(T value) const {
     int size = _dictionary->size();
     for(ValueID dictionary_index = ValueID{0}; dictionary_index < size; ++dictionary_index ) {
-      if(_dictionary->at(dictionary_index) >= value) {
+      if(value_by_id(dictionary_index) >= value) {
         return dictionary_index;
       }
     }
