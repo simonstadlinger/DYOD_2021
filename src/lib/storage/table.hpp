@@ -83,5 +83,8 @@ class Table : private Noncopyable {
   std::vector<std::string> _col_types;
 
   void _add_segment_to_chunk(std::shared_ptr<Chunk> chunk, std::string type);
+  void _compress_column(Chunk& uncompressed_chunk, std::shared_ptr<Chunk> compressed_chunk,
+                        ColumnID col_id);
 };
+
 }  // namespace opossum

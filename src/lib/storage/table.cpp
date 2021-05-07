@@ -106,16 +106,24 @@ void Table::compress_chunk(ChunkID chunk_id) {
   std::shared_ptr<Chunk> compressed_chunk = std::make_shared<Chunk>();
 
   for(ColumnID column_id = ColumnID{0}; column_id < column_count(); ++column_id) {
-    const auto& column_segment = uncompressed_chunk.get_segment(column_id);
-
-    resolve_data_type(column_type(column_id), [&](const auto data_type_t) {
-      using ColumnDataType = typename decltype(data_type_t)::type;
-      const auto compressed_segment = std::make_shared<DictionarySegment<ColumnDataType>>(column_segment);
-      compressed_chunk->add_segment(compressed_segment);
-    });
+    _compress_column(uncompressed_chunk, compressed_chunk, column_id);
   }
 
   _chunks[chunk_id] = compressed_chunk;
+}
+
+void Table::_compress_column(
+    Chunk& uncompressed_chunk,
+    std::shared_ptr<Chunk> compressed_chunk,
+    ColumnID col_id) {
+
+  const auto& column_segment = uncompressed_chunk.get_segment(col_id);
+
+  resolve_data_type(column_type(col_id), [&](const auto data_type_t) {
+    using ColumnDataType = typename decltype(data_type_t)::type;
+    const auto compressed_segment = std::make_shared<DictionarySegment<ColumnDataType>>(column_segment);
+    compressed_chunk->add_segment(compressed_segment);
+  });
 }
 
 }  // namespace opossum
