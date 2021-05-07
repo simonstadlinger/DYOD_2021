@@ -67,7 +67,8 @@ class DictionarySegment : public BaseSegment {
   // returns the first value ID that refers to a value >= the search value
   // returns INVALID_VALUE_ID if all values are smaller than the search value
   ValueID lower_bound(T value) const {
-    for(ValueID dictionary_index = ValueID{0}; dictionary_index < _dictionary->size(); ++dictionary_index ) {
+    int size = _dictionary->size();
+    for(ValueID dictionary_index = ValueID{0}; dictionary_index < size; ++dictionary_index ) {
       if(_dictionary->at(dictionary_index) >= value) {
         return dictionary_index;
       }
