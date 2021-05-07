@@ -100,4 +100,10 @@ TEST_F(StorageTableTest, CompressChunk) {
   EXPECT_THROW(compressed_chunk.append({3, "Invalid Append"}), std::runtime_error);
 }
 
+TEST_F(StorageTableTest, CompressOnlyFullChunks) {
+  t.append({1, "Insufficient Row"});
+
+  EXPECT_THROW(t.compress_chunk(ChunkID{0}), std::exception);
+}
+
 }  // namespace opossum

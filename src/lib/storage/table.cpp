@@ -103,6 +103,9 @@ void Table::print(std::ostream& out) const {
 void Table::compress_chunk(ChunkID chunk_id) {
 
   auto& uncompressed_chunk = get_chunk(chunk_id);
+  Assert(uncompressed_chunk.size() == target_chunk_size(),
+         "Attempt to compress chunk that is not yet completely filled");
+
   std::shared_ptr<Chunk> compressed_chunk = std::make_shared<Chunk>();
 
   for(ColumnID column_id = ColumnID{0}; column_id < column_count(); ++column_id) {
@@ -112,9 +115,7 @@ void Table::compress_chunk(ChunkID chunk_id) {
   _chunks[chunk_id] = compressed_chunk;
 }
 
-void Table::_compress_column(
-    Chunk& uncompressed_chunk,
-    std::shared_ptr<Chunk> compressed_chunk,
+void Table::_compress_column( Chunk& uncompressed_chunk, std::shared_ptr<Chunk> compressed_chunk,
     ColumnID col_id) {
 
   const auto& column_segment = uncompressed_chunk.get_segment(col_id);
