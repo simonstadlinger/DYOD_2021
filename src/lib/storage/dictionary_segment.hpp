@@ -36,7 +36,7 @@ class DictionarySegment : public BaseSegment {
 
   // return the value at a certain position. If you want to write efficient operators, back off!
   AllTypeVariant operator[](const ChunkOffset chunk_offset) const {
-    return static_cast<AllTypeVariant>(_dictionary->at(_attribute_vector->at(chunk_offset)));
+    return static_cast<AllTypeVariant>(get(chunk_offset));
   };
 
   // return the value at a certain position.
