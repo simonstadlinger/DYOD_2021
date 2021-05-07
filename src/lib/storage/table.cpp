@@ -10,10 +10,12 @@
 #include <vector>
 
 #include "value_segment.hpp"
+#include "dictionary_segment.hpp"
 
 #include "resolve_type.hpp"
 #include "types.hpp"
 #include "utils/assert.hpp"
+
 
 namespace opossum {
 
@@ -98,6 +100,22 @@ void Table::print(std::ostream& out) const {
   }
 }
 
-void Table::compress_chunk(ChunkID chunk_id) { throw std::runtime_error("Implement Table::compress_chunk"); }
+void Table::compress_chunk(ChunkID chunk_id) {
+
+  auto& uncompressed_chunk = get_chunk(chunk_id);
+  std::shared_ptr<Chunk> compressed_chunk = std::make_shared<Chunk>();
+
+  for(ColumnID column_id = ColumnID{0}; column_id < column_count(); ++column_id) {
+    const auto& column_segment = uncompressed_chunk.get_segment(column_id);
+
+    resolve_data_type(column_type(column_id), [&](const auto data_type_t) {
+      using ColumnDataType = typename decltype(data_type_t)::type;
+      const auto compressed_segment = std::make_shared<DictionarySegment<ColumnDataType>>(column_segment);
+      compressed_chunk->add_segment(compressed_segment);
+    });
+  }
+
+  _chunks[chunk_id] = compressed_chunk;
+}
 
 }  // namespace opossum

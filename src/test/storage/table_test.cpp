@@ -89,4 +89,15 @@ TEST_F(StorageTableTest, PrivateAddSegment) {
   EXPECT_THROW(lastSegment->append("String"), std::exception);
 }
 
+TEST_F(StorageTableTest, CompressChunk) {
+  t.append({1, "Value 1"});
+  t.append({2, "Value 2"});
+
+  t.compress_chunk(ChunkID{0});
+
+  auto& compressed_chunk = t.get_chunk(ChunkID{0});
+
+  EXPECT_THROW(compressed_chunk.append({3, "Invalid Append"}), std::runtime_error);
+}
+
 }  // namespace opossum
