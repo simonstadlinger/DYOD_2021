@@ -135,7 +135,7 @@ class DictionarySegment : public BaseSegment {
     raw_vector.reserve(all_values.size());
 
     for(auto value: all_values) {
-      auto dictionary_iterator = std::find(raw_dictionary.begin(), raw_dictionary.end(), value);
+      auto dictionary_iterator = std::lower_bound(raw_dictionary.begin(), raw_dictionary.end(), value);
       uint32_t dictionary_index = dictionary_iterator - raw_dictionary.begin();
       raw_vector.push_back(dictionary_index);
     }
