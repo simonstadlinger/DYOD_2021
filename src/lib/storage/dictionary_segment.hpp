@@ -139,7 +139,7 @@ class DictionarySegment : public BaseSegment {
       uint32_t dictionary_index = dictionary_iterator - raw_dictionary.begin();
       raw_vector.push_back(dictionary_index);
     }
-
+    // TODO: Make with variable width 
     _attribute_vector = std::make_shared<std::vector<uint32_t>>(raw_vector);
   }
 };
