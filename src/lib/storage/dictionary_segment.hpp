@@ -34,6 +34,11 @@ class DictionarySegment : public BaseSegment {
   // SEMINAR INFORMATION: Since most of these methods depend on the template parameter, you will have to implement
   // the DictionarySegment in this file. Replace the method signatures with actual implementations.
 
+  // return the value represented by a given ValueID
+  const T& value_by_value_id(ValueID value_id) const {
+      return _dictionary->at(value_id);
+  };
+
   // return the value at a certain position. If you want to write efficient operators, back off!
   AllTypeVariant operator[](const ChunkOffset chunk_offset) const {
     return static_cast<AllTypeVariant>(get(chunk_offset));
@@ -41,7 +46,7 @@ class DictionarySegment : public BaseSegment {
 
   // return the value at a certain position.
   T get(const size_t chunk_offset) const {
-      return value_by_id(_attribute_vector->at(chunk_offset));
+      return value_by_value_id(ValueID{_attribute_vector->at(chunk_offset)});
   };
 
   // dictionary segments are immutable
@@ -59,17 +64,12 @@ class DictionarySegment : public BaseSegment {
       return _attribute_vector;
   };
 
-  // return the value represented by a given ValueID
-  const T& value_by_value_id(ValueID value_id) const {
-      return _dictionary->at(value_id);
-  };
-
   // returns the first value ID that refers to a value >= the search value
   // returns INVALID_VALUE_ID if all values are smaller than the search value
   ValueID lower_bound(T value) const {
-    int size = _dictionary->size();
+    uint32_t size = _dictionary->size();
     for(ValueID dictionary_index = ValueID{0}; dictionary_index < size; ++dictionary_index ) {
-      if(value_by_id(dictionary_index) >= value) {
+      if(value_by_value_id(dictionary_index) >= value) {
         return dictionary_index;
       }
     }
@@ -86,7 +86,7 @@ class DictionarySegment : public BaseSegment {
   // returns INVALID_VALUE_ID if all values are smaller than or equal to the search value
   ValueID upper_bound(T value) const {
     for(ValueID dictionary_index = ValueID{0} ; dictionary_index < _dictionary->size(); ++dictionary_index ) {
-      if(value_by_id(dictionary_index) > value) {
+      if(value_by_value_id(dictionary_index) > value) {
         return dictionary_index;
       }
     }
