@@ -1,0 +1,29 @@
+name: Test
+
+on:
+  push:
+    branches: [ 'sprint-2' ]
+  pull_request:
+    branches: [ 'sprint-2' ]
+
+jobs:
+  test:
+
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix:
+        os: [ ubuntu-latest, macos-latest]
+
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v2
+    - name: Install Dependencies
+      run: ./install_dependencies.sh
+      env:
+        OPOSSUM_HEADLESS_SETUP: TRUE
+    - name: Create Build Directory and CMakeFiles
+      run: mkdir cmake-build-debug && cd cmake-build-debug && cmake ..
+    - name: Make
+      run: cd cmake-build-debug && make -j4 hyriseTest
+    - name: Run Tests
+      run: ./cmake-build-debug/hyriseTest
