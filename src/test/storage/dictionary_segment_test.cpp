@@ -44,7 +44,7 @@ TEST_F(StorageDictionarySegmentTest, CompressSegmentString) {
   vc_str->append("Steve");
   vc_str->append("Hasso");
   vc_str->append("Bill");
-
+  
   auto dict_col = compressStringValueSegment(vc_str);
 
   // Test attribute_vector size
