@@ -2,8 +2,6 @@
 
 namespace opossum {
 
-
-//FixedSizeAttributeVector
 template <typename T>
 class FixedSizeAttributeVector : public BaseAttributeVector {
   public:
@@ -25,7 +23,12 @@ class FixedSizeAttributeVector : public BaseAttributeVector {
 
     // sets the value id at a given position
     void set(const size_t i, const ValueID value_id) {
-      _attributes.at(i) = (T) value_id;
+      // [] operator does somehow not change the size of the vector
+      // according to this stackoverflow answer it's considered bad stil to just use the [] operator
+      // https://stackoverflow.com/questions/31372809/c-vector-size-is-returning-zero
+      // nevertheless, this does not feel right.
+      _attributes.push_back((T) value_id);
+      _attributes[i] = _attributes.back();
     }
 
     // returns the number of values

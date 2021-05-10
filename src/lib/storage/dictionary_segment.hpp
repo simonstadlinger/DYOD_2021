@@ -29,7 +29,6 @@ class DictionarySegment : public BaseSegment {
    */
   explicit DictionarySegment(const std::shared_ptr<BaseSegment>& baseSegment) {
     auto valueSegment = std::static_pointer_cast<ValueSegment<T>>(baseSegment);
-    std::cout << "moin";
     _build_compressed_dictionary(valueSegment->values());
   }
 
@@ -121,7 +120,6 @@ class DictionarySegment : public BaseSegment {
   std::shared_ptr<BaseAttributeVector> _attribute_vector;
 
   void _build_compressed_dictionary(const std::vector<T>& values) {
-    std::cout << "compressing";
     auto raw_dictionary = std::move(values);
     std::vector<T> raw_values = raw_dictionary;
 
@@ -139,18 +137,16 @@ class DictionarySegment : public BaseSegment {
     size_t size = all_values.size();
 
     const int required_width = std::ceil(std::log2(size));
-    std::cout << required_width;
 
-    if (required_width > 8) {
+    if (required_width <= 8) {
       _attribute_vector = std::make_shared<FixedSizeAttributeVector<uint8_t>>(size);
-    } else if (required_width > 16) {
+    } else if (required_width <= 16) {
       _attribute_vector = std::make_shared<FixedSizeAttributeVector<uint16_t>>(size);
-    } else if (required_width > 32) {
+    } else {
       _attribute_vector = std::make_shared<FixedSizeAttributeVector<uint32_t>>(size);
     }
 
     for(size_t all_values_index = 0; all_values_index < size; all_values_index++) {
-      std::cout << all_values_index;
       const auto value = type_cast<T>(all_values.at(all_values_index));
       auto dictionary_iterator = std::lower_bound(raw_dictionary.begin(), raw_dictionary.end(), value);
       uint32_t dictionary_index = dictionary_iterator - raw_dictionary.begin();
