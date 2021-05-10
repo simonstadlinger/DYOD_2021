@@ -9,6 +9,7 @@
 
 #include "all_type_variant.hpp"
 #include "types.hpp"
+#include "value_segment.hpp"
 
 namespace opossum {
 
