@@ -5,6 +5,7 @@
 #include <string>
 #include <utility>
 #include <vector>
+#include <algorithm>
 
 #include "all_type_variant.hpp"
 #include "fixed_size_attribute_vector.hpp"
@@ -36,26 +37,26 @@ class DictionarySegment : public BaseSegment {
   // the DictionarySegment in this file. Replace the method signatures with actual implementations.
 
   // return the value represented by a given ValueID
-  const T& value_by_value_id(ValueID value_id) const { return _dictionary->at(value_id); };
+  const T& value_by_value_id(ValueID value_id) const { return _dictionary->at(value_id); }
 
   // return the value at a certain position. If you want to write efficient operators, back off!
   AllTypeVariant operator[](const ChunkOffset chunk_offset) const {
     return static_cast<AllTypeVariant>(get(chunk_offset));
-  };
+  }
 
   // return the value at a certain position.
-  T get(const size_t chunk_offset) const { return value_by_value_id(ValueID{_attribute_vector->get(chunk_offset)}); };
+  T get(const size_t chunk_offset) const { return value_by_value_id(ValueID{_attribute_vector->get(chunk_offset)}); }
 
   // dictionary segments are immutable
   void append(const AllTypeVariant& val) {
     throw std::runtime_error("Dictionary segments are immutable. You shall not append anything.");
-  };
+  }
 
   // returns an underlying dictionary
-  std::shared_ptr<const std::vector<T>> dictionary() { return _dictionary; };
+  std::shared_ptr<const std::vector<T>> dictionary() { return _dictionary; }
 
   // returns an underlying data structure
-  std::shared_ptr<BaseAttributeVector> attribute_vector() const { return _attribute_vector; };
+  std::shared_ptr<BaseAttributeVector> attribute_vector() const { return _attribute_vector; }
 
   // returns the first value ID that refers to a value >= the search value
   // returns INVALID_VALUE_ID if all values are smaller than the search value
@@ -68,10 +69,10 @@ class DictionarySegment : public BaseSegment {
     }
 
     return INVALID_VALUE_ID;
-  };
+  }
 
   // same as lower_bound(T), but accepts an AllTypeVariant
-  ValueID lower_bound(const AllTypeVariant& value) const { return lower_bound(static_cast<T>(value)); };
+  ValueID lower_bound(const AllTypeVariant& value) const { return lower_bound(static_cast<T>(value)); }
 
   // returns the first value ID that refers to a value > the search value
   // returns INVALID_VALUE_ID if all values are smaller than or equal to the search value
@@ -83,19 +84,19 @@ class DictionarySegment : public BaseSegment {
     }
 
     return INVALID_VALUE_ID;
-  };
+  }
 
   // same as upper_bound(T), but accepts an AllTypeVariant
-  ValueID upper_bound(const AllTypeVariant& value) const { return upper_bound(static_cast<T>(value)); };
+  ValueID upper_bound(const AllTypeVariant& value) const { return upper_bound(static_cast<T>(value)); }
 
   // return the number of _dictionary (dictionary entries)
-  size_t unique_values_count() const { return _dictionary->size(); };
+  size_t unique_values_count() const { return _dictionary->size(); }
 
   // return the number of entries
-  ChunkOffset size() const { return _attribute_vector->size(); };
+  ChunkOffset size() const { return _attribute_vector->size(); }
 
   // returns the calculated memory usage
-  size_t estimate_memory_usage() const final { return 0; };
+  size_t estimate_memory_usage() const final { return 0; }
 
  protected:
   std::shared_ptr<std::vector<T>> _dictionary;
@@ -135,6 +136,6 @@ class DictionarySegment : public BaseSegment {
       _attribute_vector->set(all_values_index, static_cast<ValueID>(dictionary_index));
     }
   }
-};
+}
 
 }  // namespace opossum

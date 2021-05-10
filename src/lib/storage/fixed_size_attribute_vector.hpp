@@ -1,11 +1,16 @@
+#pragma once
+
+#include <vector>
+
 #include "base_attribute_vector.hpp"
+#include "type_cast.hpp"
 
 namespace opossum {
 
 template <typename T>
 class FixedSizeAttributeVector : public BaseAttributeVector {
  public:
-  FixedSizeAttributeVector(size_t attribute_vector_size) { _attributes.reserve(attribute_vector_size); }
+  explicit FixedSizeAttributeVector(size_t attribute_vector_size) { _attributes.reserve(attribute_vector_size); }
 
   ~FixedSizeAttributeVector() = default;
 
@@ -31,7 +36,7 @@ class FixedSizeAttributeVector : public BaseAttributeVector {
   size_t size() const { return _attributes.size(); }
 
   // returns the width of biggest value id in bytes
-  AttributeVectorWidth width() const { return static_cast<AttributeVectorWidth>(sizeof(T)); };
+  AttributeVectorWidth width() const { return static_cast<AttributeVectorWidth>(sizeof(T)); }
 
  private:
   std::vector<T> _attributes = {};
