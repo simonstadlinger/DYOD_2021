@@ -110,5 +110,38 @@ TEST_F(StorageDictionarySegmentTest, ValueByValueID) {
   EXPECT_EQ(2, actualValue );
 }
 
+TEST_F(StorageDictionarySegmentTest, FixedSizeAttributeVector) {
+
+  // test smallest width
+  for (int i = 0; i < 10; i += 1) vc_int->append(i);
+
+  auto dict_col = compressIntValueSegment(vc_int);
+
+  auto attributeVector = dict_col->attribute_vector();
+
+  auto actualValue = attributeVector->width();
+  EXPECT_EQ(1, actualValue );
+
+  // 2^8 = 256 -> Adding 247, we now have 257 elements in our vector
+  for (int i = 0; i < 247; i += 1) vc_int->append(i);
+
+  dict_col = compressIntValueSegment(vc_int);
+
+  attributeVector = dict_col->attribute_vector();
+
+  actualValue = attributeVector->width();
+  EXPECT_EQ(2, actualValue );
+
+  // 2^16 = 65.536 -> Adding 65.280, we now have 65.537 elements in our vector
+  for (int i = 0; i < 65280; i += 1) vc_int->append(i);
+
+  dict_col = compressIntValueSegment(vc_int);
+
+  attributeVector = dict_col->attribute_vector();
+
+  actualValue = attributeVector->width();
+  EXPECT_EQ(4, actualValue );
+
+}
 
 }  // namespace opossum

@@ -61,7 +61,7 @@ class DictionarySegment : public BaseSegment {
   };
 
   // returns an underlying data structure
-  std::shared_ptr<std::vector<uint32_t>> attribute_vector() const {
+  std::shared_ptr<BaseAttributeVector> attribute_vector() const {
       return _attribute_vector;
   };
 
