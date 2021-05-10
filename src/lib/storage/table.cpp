@@ -84,12 +84,16 @@ const std::string& Table::column_name(const ColumnID column_id) const { return _
 const std::string& Table::column_type(const ColumnID column_id) const { return _col_types.at(column_id); }
 
 Chunk& Table::get_chunk(ChunkID chunk_id) {
-  std::lock_guard<std::mutex> lock(chunk_lock);
+  std::lock_guard<std::mutex> lock(_chunk_lock);
   return *_chunks.at(chunk_id);
 }
 
 const Chunk& Table::get_chunk(ChunkID chunk_id) const {
-  std::lock_guard<std::mutex> lock(chunk_lock);
+  std::lock_guard<std::mutex> lock(_chunk_lock);
+  return std::as_const(_get_chunk(chunk_id));
+}
+
+Chunk& Table::_get_chunk(ChunkID chunk_id) const  {
   return *_chunks.at(chunk_id);
 }
 
@@ -107,8 +111,8 @@ void Table::print(std::ostream& out) const {
 }
 
 void Table::compress_chunk(ChunkID chunk_id) {
-  std::lock_guard<std::mutex> lock(chunk_lock);
-  auto& uncompressed_chunk = get_chunk(chunk_id);
+  std::lock_guard<std::mutex> lock(_chunk_lock);
+  auto& uncompressed_chunk = _get_chunk(chunk_id);
   Assert(uncompressed_chunk.size() == target_chunk_size(),
          "Attempt to compress chunk that is not yet completely filled.");
 
