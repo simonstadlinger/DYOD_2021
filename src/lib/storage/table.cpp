@@ -122,9 +122,9 @@ std::shared_ptr<Chunk> Table::_compress_multithreaded(Chunk& uncompressed_chunk)
   auto compressed_chunk = std::make_shared<Chunk>();
   std::vector<std::thread> column_threads = {};
 
-  for (ColumnID column_id = ColumnID{0}; column_id < column_count(); ++column_id) {
+  for (ColumnID column_id = ColumnID{0}; column_id < column_count(); column_id++) {
     std::thread single_column_thread(&Table::_compress_column, this,
-                                     std::ref(uncompressed_chunk), std::ref(compressed_chunk), std::ref(column_id));
+                                     std::ref(uncompressed_chunk), std::ref(compressed_chunk), column_id);
     column_threads.push_back(std::move(single_column_thread));
   }
 
@@ -138,7 +138,7 @@ std::shared_ptr<Chunk> Table::_compress_multithreaded(Chunk& uncompressed_chunk)
 }
 
 void Table::_compress_column(Chunk& uncompressed_chunk, std::shared_ptr<Chunk>& compressed_chunk,
-                             ColumnID& col_id) const {
+                             ColumnID col_id) const {
   const auto& column_segment = uncompressed_chunk.get_segment(col_id);
 
   resolve_data_type(column_type(col_id), [&](const auto data_type_t) {
