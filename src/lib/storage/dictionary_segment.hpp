@@ -136,6 +136,6 @@ class DictionarySegment : public BaseSegment {
       _attribute_vector->set(all_values_index, static_cast<ValueID>(dictionary_index));
     }
   }
-}
+};
 
 }  // namespace opossum
