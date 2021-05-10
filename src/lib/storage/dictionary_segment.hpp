@@ -1,11 +1,11 @@
 #pragma once
 
+#include <algorithm>
 #include <limits>
 #include <memory>
 #include <string>
 #include <utility>
 #include <vector>
-#include <algorithm>
 
 #include "all_type_variant.hpp"
 #include "types.hpp"
@@ -42,9 +42,7 @@ class DictionarySegment : public BaseSegment {
   }
 
   // return the value at a certain position.
-  T get(const size_t chunk_offset) const {
-    return value_by_value_id(ValueID{_attribute_vector->at(chunk_offset)});
-  }
+  T get(const size_t chunk_offset) const { return value_by_value_id(ValueID{_attribute_vector->at(chunk_offset)}); }
 
   // dictionary segments are immutable
   void append(const AllTypeVariant& val) {

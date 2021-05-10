@@ -123,13 +123,13 @@ std::shared_ptr<Chunk> Table::_compress_multithreaded(Chunk& uncompressed_chunk)
   std::vector<std::thread> column_threads = {};
 
   for (ColumnID column_id = ColumnID{0}; column_id < column_count(); column_id++) {
-    std::thread single_column_thread(&Table::_compress_column, this,
-                                     std::ref(uncompressed_chunk), std::ref(compressed_chunk), column_id);
+    std::thread single_column_thread(&Table::_compress_column, this, std::ref(uncompressed_chunk),
+                                     std::ref(compressed_chunk), column_id);
     column_threads.push_back(std::move(single_column_thread));
   }
 
-  for (std::thread & column_thread: column_threads) {
-    if(column_thread.joinable()) {
+  for (std::thread& column_thread : column_threads) {
+    if (column_thread.joinable()) {
       column_thread.join();
     }
   }
