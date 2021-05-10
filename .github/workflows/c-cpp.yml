@@ -19,8 +19,6 @@ jobs:
       run: ./install_dependencies.sh
       env:
         OPOSSUM_HEADLESS_SETUP: TRUE
-    - name: Format
-      run: ./scripts/format.sh
     - name: Create Build Directory and CMakeFiles
       run: mkdir cmake-build-debug && cd cmake-build-debug && cmake ..
     - name: Make

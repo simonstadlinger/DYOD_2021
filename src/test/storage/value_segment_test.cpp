@@ -69,9 +69,9 @@ TEST_F(StorageValueSegmentTest, GetAllValues) {
 
   const auto& allValues = int_value_segment.values();
 
-  EXPECT_EQ(type_cast<int>(allValues.at(0)),0);
-  EXPECT_EQ(type_cast<int>(allValues.at(1)),1);
-  EXPECT_EQ(type_cast<int>(allValues.at(2)),2);
+  EXPECT_EQ(type_cast<int>(allValues.at(0)), 0);
+  EXPECT_EQ(type_cast<int>(allValues.at(1)), 1);
+  EXPECT_EQ(type_cast<int>(allValues.at(2)), 2);
   EXPECT_THROW(type_cast<int>(allValues.at(3)), std::exception);
 }
 

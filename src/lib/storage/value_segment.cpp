@@ -28,7 +28,7 @@ ChunkOffset ValueSegment<T>::size() const {
 }
 
 template <typename T>
-const std::vector<T>& ValueSegment<T>::values() const{
+const std::vector<T>& ValueSegment<T>::values() const {
   return _values;
 }
 

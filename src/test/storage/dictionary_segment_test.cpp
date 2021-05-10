@@ -16,7 +16,8 @@ class StorageDictionarySegmentTest : public ::testing::Test {
   std::shared_ptr<opossum::ValueSegment<std::string>> vc_str = std::make_shared<opossum::ValueSegment<std::string>>();
 };
 
-std::shared_ptr<DictionarySegment<std::string>> compressStringValueSegment(std::shared_ptr<opossum::ValueSegment<std::string>> value_segment) {
+std::shared_ptr<DictionarySegment<std::string>> compressStringValueSegment(
+    std::shared_ptr<opossum::ValueSegment<std::string>> value_segment) {
   std::shared_ptr<BaseSegment> col;
   resolve_data_type("string", [&](auto type) {
     using Type = typename decltype(type)::type;
@@ -26,7 +27,8 @@ std::shared_ptr<DictionarySegment<std::string>> compressStringValueSegment(std::
   return std::dynamic_pointer_cast<DictionarySegment<std::string>>(col);
 }
 
-std::shared_ptr<DictionarySegment<int>> compressIntValueSegment(std::shared_ptr<opossum::ValueSegment<int>> value_segment) {
+std::shared_ptr<DictionarySegment<int>> compressIntValueSegment(
+    std::shared_ptr<opossum::ValueSegment<int>> value_segment) {
   std::shared_ptr<BaseSegment> col;
   resolve_data_type("int", [&](auto type) {
     using Type = typename decltype(type)::type;
@@ -36,7 +38,6 @@ std::shared_ptr<DictionarySegment<int>> compressIntValueSegment(std::shared_ptr<
   return std::dynamic_pointer_cast<DictionarySegment<int>>(col);
 }
 
-
 TEST_F(StorageDictionarySegmentTest, CompressSegmentString) {
   vc_str->append("Bill");
   vc_str->append("Steve");
@@ -44,7 +45,7 @@ TEST_F(StorageDictionarySegmentTest, CompressSegmentString) {
   vc_str->append("Steve");
   vc_str->append("Hasso");
   vc_str->append("Bill");
-  
+
   auto dict_col = compressStringValueSegment(vc_str);
 
   // Test attribute_vector size
@@ -96,22 +97,18 @@ TEST_F(StorageDictionarySegmentTest, GetOperator) {
   EXPECT_EQ((*dict_col).get(1), "Steve");
   EXPECT_EQ((*dict_col).get(2), "Alexander");
   EXPECT_EQ((*dict_col).get(3), "Steve");
-
 }
 
 TEST_F(StorageDictionarySegmentTest, ValueByValueID) {
-
   for (int i = 0; i <= 10; i += 2) vc_int->append(i);
 
   auto dict_col = compressIntValueSegment(vc_int);
 
-
   auto actualValue = dict_col->value_by_value_id(dict_col->lower_bound(2));
-  EXPECT_EQ(2, actualValue );
+  EXPECT_EQ(2, actualValue);
 }
 
 TEST_F(StorageDictionarySegmentTest, FixedSizeAttributeVector) {
-
   // test smallest width
   for (int i = 0; i < 10; i += 1) vc_int->append(i);
 
@@ -120,7 +117,7 @@ TEST_F(StorageDictionarySegmentTest, FixedSizeAttributeVector) {
   auto attributeVector = dict_col->attribute_vector();
 
   auto actualValue = attributeVector->width();
-  EXPECT_EQ(1, actualValue );
+  EXPECT_EQ(1, actualValue);
 
   // 2^8 = 256 -> Adding 247, we now have 257 elements in our vector
   for (int i = 0; i < 247; i += 1) vc_int->append(i);
@@ -130,7 +127,7 @@ TEST_F(StorageDictionarySegmentTest, FixedSizeAttributeVector) {
   attributeVector = dict_col->attribute_vector();
 
   actualValue = attributeVector->width();
-  EXPECT_EQ(2, actualValue );
+  EXPECT_EQ(2, actualValue);
 
   // 2^16 = 65.536 -> Adding 65.280, we now have 65.537 elements in our vector
   for (int i = 0; i < 65280; i += 1) vc_int->append(i);
@@ -140,8 +137,7 @@ TEST_F(StorageDictionarySegmentTest, FixedSizeAttributeVector) {
   attributeVector = dict_col->attribute_vector();
 
   actualValue = attributeVector->width();
-  EXPECT_EQ(4, actualValue );
-
+  EXPECT_EQ(4, actualValue);
 }
 
 }  // namespace opossum
