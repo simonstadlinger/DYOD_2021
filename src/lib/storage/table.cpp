@@ -9,13 +9,12 @@
 #include <utility>
 #include <vector>
 
-#include "value_segment.hpp"
 #include "dictionary_segment.hpp"
+#include "value_segment.hpp"
 
 #include "resolve_type.hpp"
 #include "types.hpp"
 #include "utils/assert.hpp"
-
 
 namespace opossum {
 
@@ -93,9 +92,7 @@ const Chunk& Table::get_chunk(ChunkID chunk_id) const {
   return std::as_const(_get_chunk(chunk_id));
 }
 
-Chunk& Table::_get_chunk(ChunkID chunk_id) const  {
-  return *_chunks.at(chunk_id);
-}
+Chunk& Table::_get_chunk(ChunkID chunk_id) const { return *_chunks.at(chunk_id); }
 
 void Table::print(std::ostream& out) const {
   int col_width = 20;
@@ -118,16 +115,15 @@ void Table::compress_chunk(ChunkID chunk_id) {
 
   std::shared_ptr<Chunk> compressed_chunk = std::make_shared<Chunk>();
 
-  for(ColumnID column_id = ColumnID{0}; column_id < column_count(); ++column_id) {
+  for (ColumnID column_id = ColumnID{0}; column_id < column_count(); ++column_id) {
     _compress_column(uncompressed_chunk, compressed_chunk, column_id);
   }
 
   _chunks[chunk_id] = compressed_chunk;
 }
 
-void Table::_compress_column( Chunk& uncompressed_chunk, std::shared_ptr<Chunk> compressed_chunk,
-    ColumnID col_id) const {
-
+void Table::_compress_column(Chunk& uncompressed_chunk, std::shared_ptr<Chunk> compressed_chunk,
+                             ColumnID col_id) const {
   const auto& column_segment = uncompressed_chunk.get_segment(col_id);
 
   resolve_data_type(column_type(col_id), [&](const auto data_type_t) {
