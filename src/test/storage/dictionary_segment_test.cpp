@@ -140,4 +140,31 @@ TEST_F(StorageDictionarySegmentTest, FixedSizeAttributeVector) {
   EXPECT_EQ(4, actualValue);
 }
 
+TEST_F(StorageDictionarySegmentTest, MemoryUsage) {
+  // 10 elements of size int (4 bytes)
+  // dictionary: 10 * 4 = 40 bytes
+  // attribute_vector (uint_8): 10 * 1 = 10
+  // 10 + 40 = 50
+  for (int i = 0; i < 10; i += 1) {
+      vc_int->append(i);
+  }
+
+  auto dict_col = compressIntValueSegment(vc_int);
+
+  auto actualValue = dict_col->estimate_memory_usage();
+  EXPECT_EQ(50, actualValue);
+  // 10 elements of size int (4 bytes)
+  // dictionary (10 values): 10 * 4 = 40 bytes
+  // attribute_vector (uint_8): 20 * 1 = 20
+  // 20 + 40 = 60
+  for (int i = 0; i < 10; i += 1) {
+     vc_int->append(1);
+  }
+
+  dict_col = compressIntValueSegment(vc_int);
+
+  actualValue = dict_col->estimate_memory_usage();
+  EXPECT_EQ(60, actualValue);
+}
+
 }  // namespace opossum
