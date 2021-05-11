@@ -115,8 +115,8 @@ void Table::compress_chunk(ChunkID chunk_id) {
 
   auto compressed_chunk = std::make_shared<Chunk>();
 
-  auto column_count = column_count();
-  for (ColumnID column_id = ColumnID{0}; column_id < column_count; ++column_id) {
+  auto col_count= column_count();
+  for (ColumnID column_id = ColumnID{0}; column_id < col_count; ++column_id) {
     _compress_column(uncompressed_chunk, compressed_chunk, column_id);
   }
 
