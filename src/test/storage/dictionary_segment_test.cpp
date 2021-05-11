@@ -145,7 +145,9 @@ TEST_F(StorageDictionarySegmentTest, MemoryUsage) {
   // dictionary: 10 * 4 = 40 bytes
   // attribute_vector (uint_8): 10 * 1 = 10
   // 10 + 40 = 50
-  for (int i = 0; i < 10; i += 1) vc_int->append(i);
+  for (int i = 0; i < 10; i += 1) {
+      vc_int->append(i);
+  }
 
   auto dict_col = compressIntValueSegment(vc_int);
 
