@@ -8,6 +8,8 @@
 #include <vector>
 
 #include "all_type_variant.hpp"
+#include "fixed_size_attribute_vector.hpp"
+#include "type_cast.hpp"
 #include "types.hpp"
 #include "value_segment.hpp"
 
@@ -29,12 +31,14 @@ class DictionarySegment : public BaseSegment {
    */
   explicit DictionarySegment(const std::shared_ptr<BaseSegment>& baseSegment) {
     auto valueSegment = std::static_pointer_cast<ValueSegment<T>>(baseSegment);
-
     _build_compressed_dictionary(valueSegment->values());
   }
 
   // SEMINAR INFORMATION: Since most of these methods depend on the template parameter, you will have to implement
   // the DictionarySegment in this file. Replace the method signatures with actual implementations.
+
+  // return the value represented by a given ValueID
+  const T& value_by_value_id(ValueID value_id) const { return _dictionary->at(value_id); }
 
   // return the value at a certain position. If you want to write efficient operators, back off!
   AllTypeVariant operator[](const ChunkOffset chunk_offset) const {
@@ -42,7 +46,7 @@ class DictionarySegment : public BaseSegment {
   }
 
   // return the value at a certain position.
-  T get(const size_t chunk_offset) const { return value_by_value_id(ValueID{_attribute_vector->at(chunk_offset)}); }
+  T get(const size_t chunk_offset) const { return value_by_value_id(ValueID{_attribute_vector->get(chunk_offset)}); }
 
   // dictionary segments are immutable
   void append(const AllTypeVariant& val) {
@@ -53,10 +57,7 @@ class DictionarySegment : public BaseSegment {
   std::shared_ptr<const std::vector<T>> dictionary() { return _dictionary; }
 
   // returns an underlying data structure
-  std::shared_ptr<std::vector<uint32_t>> attribute_vector() const { return _attribute_vector; }
-
-  // return the value represented by a given ValueID
-  const T& value_by_value_id(ValueID value_id) const { return _dictionary->at(value_id); }
+  std::shared_ptr<BaseAttributeVector> attribute_vector() const { return _attribute_vector; }
 
   // returns the first value ID that refers to a value >= the search value
   // returns INVALID_VALUE_ID if all values are smaller than the search value
@@ -97,11 +98,15 @@ class DictionarySegment : public BaseSegment {
   ChunkOffset size() const { return _attribute_vector->size(); }
 
   // returns the calculated memory usage
-  size_t estimate_memory_usage() const final { return 0; }
+  size_t estimate_memory_usage() const final {
+    auto attributeVecMem = _attribute_vector->width() * _attribute_vector->size();
+    auto dictionaryVecMem = _dictionary->size() * sizeof(T);
+    return static_cast<size_t>(attributeVecMem + dictionaryVecMem);
+  }
 
  protected:
   std::shared_ptr<std::vector<T>> _dictionary;
-  std::shared_ptr<std::vector<uint32_t>> _attribute_vector;
+  std::shared_ptr<BaseAttributeVector> _attribute_vector;
 
   void _build_compressed_dictionary(const std::vector<T>& values) {
     auto raw_dictionary = std::move(values);
@@ -118,14 +123,24 @@ class DictionarySegment : public BaseSegment {
   void _build_attribute_vector(std::vector<T>& raw_dictionary, std::vector<T>& all_values) {
     std::vector<uint32_t> raw_vector{};
     raw_vector.reserve(all_values.size());
+    size_t size = all_values.size();
 
-    for (auto value : all_values) {
-      auto dictionary_iterator = std::lower_bound(raw_dictionary.begin(), raw_dictionary.end(), value);
-      uint32_t dictionary_index = dictionary_iterator - raw_dictionary.begin();
-      raw_vector.push_back(dictionary_index);
+    const int required_width = std::ceil(std::log2(size));
+
+    if (required_width <= 8) {
+      _attribute_vector = std::make_shared<FixedSizeAttributeVector<uint8_t>>(size);
+    } else if (required_width <= 16) {
+      _attribute_vector = std::make_shared<FixedSizeAttributeVector<uint16_t>>(size);
+    } else {
+      _attribute_vector = std::make_shared<FixedSizeAttributeVector<uint32_t>>(size);
     }
 
-    _attribute_vector = std::make_shared<std::vector<uint32_t>>(raw_vector);
+    for (size_t all_values_index = 0; all_values_index < size; all_values_index++) {
+      const auto value = type_cast<T>(all_values.at(all_values_index));
+      auto dictionary_iterator = std::lower_bound(raw_dictionary.begin(), raw_dictionary.end(), value);
+      uint32_t dictionary_index = dictionary_iterator - raw_dictionary.begin();
+      _attribute_vector->set(all_values_index, static_cast<ValueID>(dictionary_index));
+    }
   }
 };
 
