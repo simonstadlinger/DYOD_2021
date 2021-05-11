@@ -7,6 +7,7 @@
 #include "../../lib/storage/base_segment.hpp"
 #include "../../lib/storage/dictionary_segment.hpp"
 #include "../../lib/storage/value_segment.hpp"
+#include "../../lib/type_cast.hpp"
 
 namespace opossum {
 
@@ -146,7 +147,7 @@ TEST_F(StorageDictionarySegmentTest, MemoryUsage) {
   // attribute_vector (uint_8): 10 * 1 = 10
   // 10 + 40 = 50
   for (int i = 0; i < 10; i += 1) {
-      vc_int->append(i);
+    vc_int->append(i);
   }
 
   auto dict_col = compressIntValueSegment(vc_int);
@@ -158,7 +159,7 @@ TEST_F(StorageDictionarySegmentTest, MemoryUsage) {
   // attribute_vector (uint_8): 20 * 1 = 20
   // 20 + 40 = 60
   for (int i = 0; i < 10; i += 1) {
-     vc_int->append(1);
+    vc_int->append(1);
   }
 
   dict_col = compressIntValueSegment(vc_int);
