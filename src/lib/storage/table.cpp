@@ -6,6 +6,7 @@
 #include <memory>
 #include <numeric>
 #include <string>
+#include <thread>
 #include <utility>
 #include <vector>
 
@@ -113,17 +114,32 @@ void Table::compress_chunk(ChunkID chunk_id) {
   Assert(uncompressed_chunk.size() == target_chunk_size(),
          "Attempt to compress chunk that is not yet completely filled.");
 
-  auto compressed_chunk = std::make_shared<Chunk>();
-
-  auto col_count = column_count();
-  for (ColumnID column_id = ColumnID{0}; column_id < col_count; ++column_id) {
-    _compress_column(uncompressed_chunk, compressed_chunk, column_id);
-  }
-
+  std::shared_ptr<Chunk> compressed_chunk = _compress_multithreaded(uncompressed_chunk);
   _chunks[chunk_id] = compressed_chunk;
 }
 
-void Table::_compress_column(Chunk& uncompressed_chunk, std::shared_ptr<Chunk> compressed_chunk,
+std::shared_ptr<Chunk> Table::_compress_multithreaded(Chunk& uncompressed_chunk) {
+  auto compressed_chunk = std::make_shared<Chunk>();
+  auto col_count = column_count();
+  std::vector<std::thread> column_threads = {};
+  column_threads.reserve(col_count);
+
+  for (ColumnID column_id = ColumnID{0}; column_id < col_count; column_id++) {
+    std::thread single_column_thread(&Table::_compress_column, this, std::ref(uncompressed_chunk),
+                                     std::ref(compressed_chunk), column_id);
+    column_threads.push_back(std::move(single_column_thread));
+  }
+
+  for (std::thread& column_thread : column_threads) {
+    if (column_thread.joinable()) {
+      column_thread.join();
+    }
+  }
+
+  return compressed_chunk;
+}
+
+void Table::_compress_column(Chunk& uncompressed_chunk, std::shared_ptr<Chunk>& compressed_chunk,
                              ColumnID col_id) const {
   const auto& column_segment = uncompressed_chunk.get_segment(col_id);
 
