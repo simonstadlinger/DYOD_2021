@@ -113,7 +113,7 @@ void Table::compress_chunk(ChunkID chunk_id) {
   Assert(uncompressed_chunk.size() == target_chunk_size(),
          "Attempt to compress chunk that is not yet completely filled.");
 
-  std::shared_ptr<Chunk> compressed_chunk = std::make_shared<Chunk>();
+  auto compressed_chunk = std::make_shared<Chunk>();
 
   auto column_count = column_count();
   for (ColumnID column_id = ColumnID{0}; column_id < column_count; ++column_id) {
