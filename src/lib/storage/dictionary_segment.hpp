@@ -11,6 +11,7 @@
 #include "fixed_size_attribute_vector.hpp"
 #include "type_cast.hpp"
 #include "types.hpp"
+#include "value_segment.hpp"
 
 namespace opossum {
 
@@ -57,12 +58,12 @@ class DictionarySegment : public BaseSegment {
 
   // returns an underlying data structure
   std::shared_ptr<BaseAttributeVector> attribute_vector() const { return _attribute_vector; }
-
+  
   // returns the first value ID that refers to a value >= the search value
   // returns INVALID_VALUE_ID if all values are smaller than the search value
   ValueID lower_bound(T value) const {
-    uint32_t size = _dictionary->size();
-    for (ValueID dictionary_index = ValueID{0}; dictionary_index < size; ++dictionary_index) {
+    auto dictionary_size = _dictionary->size();
+    for (ValueID dictionary_index = ValueID{0}; dictionary_index < dictionary_size; ++dictionary_index) {
       if (value_by_value_id(dictionary_index) >= value) {
         return dictionary_index;
       }
@@ -77,7 +78,8 @@ class DictionarySegment : public BaseSegment {
   // returns the first value ID that refers to a value > the search value
   // returns INVALID_VALUE_ID if all values are smaller than or equal to the search value
   ValueID upper_bound(T value) const {
-    for (ValueID dictionary_index = ValueID{0}; dictionary_index < _dictionary->size(); ++dictionary_index) {
+    auto dictionary_size = _dictionary->size();
+    for (ValueID dictionary_index = ValueID{0}; dictionary_index < dictionary_size; ++dictionary_index) {
       if (value_by_value_id(dictionary_index) > value) {
         return dictionary_index;
       }
