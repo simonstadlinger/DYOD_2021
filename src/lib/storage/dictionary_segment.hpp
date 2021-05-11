@@ -1,11 +1,11 @@
 #pragma once
 
+#include <algorithm>
 #include <limits>
 #include <memory>
 #include <string>
 #include <utility>
 #include <vector>
-#include <algorithm>
 
 #include "all_type_variant.hpp"
 #include "fixed_size_attribute_vector.hpp"
@@ -58,7 +58,7 @@ class DictionarySegment : public BaseSegment {
 
   // returns an underlying data structure
   std::shared_ptr<BaseAttributeVector> attribute_vector() const { return _attribute_vector; }
-  
+
   // returns the first value ID that refers to a value >= the search value
   // returns INVALID_VALUE_ID if all values are smaller than the search value
   ValueID lower_bound(T value) const {

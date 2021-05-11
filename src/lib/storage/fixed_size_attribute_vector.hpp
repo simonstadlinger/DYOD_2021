@@ -28,12 +28,12 @@ class FixedSizeAttributeVector : public BaseAttributeVector {
     // according to this stackoverflow answer it's considered bad practice to just use the [] operator
     // https://stackoverflow.com/questions/31372809/c-vector-size-is-returning-zero
     // nevertheless, this does not feel right.
-     if (_attributes.begin() + index < _attributes.end()) {
+    if (_attributes.begin() + index < _attributes.end()) {
       _attributes.at(index) = (T)value_id;
-    } else if (_attributes.begin() + index == _attributes.end()){
-      _attributes.push_back((T) value_id);
+    } else if (_attributes.begin() + index == _attributes.end()) {
+      _attributes.push_back((T)value_id);
     } else {
-      throw std::runtime_error("Out of Bounds"); 
+      throw std::runtime_error("Out of Bounds");
     }
   }
 
