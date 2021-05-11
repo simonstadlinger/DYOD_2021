@@ -23,15 +23,15 @@ class FixedSizeAttributeVector : public BaseAttributeVector {
   ValueID get(const size_t i) const { return static_cast<ValueID>(_attributes.at(i)); }
 
   // sets the value id at a given position
-  void set(const size_t i, const ValueID value_id) {
+  void set(const size_t index, const ValueID value_id) {
     // [] operator does somehow not change the size of the vector
-    // according to this stackoverflow answer it's considered bad stil to just use the [] operator
+    // according to this stackoverflow answer it's considered bad practice to just use the [] operator
     // https://stackoverflow.com/questions/31372809/c-vector-size-is-returning-zero
     // nevertheless, this does not feel right.
-     if (_attributes.begin() + position < _attributes.end()) {
-      _attributes.at(position) = (T)value_id;
-    } else if (_attributes.begin() + position == _attributes.end()){
-      _attributes.push_back((T)value_id);
+     if (_attributes.begin() + index < _attributes.end()) {
+      _attributes.at(index) = (T)value_id;
+    } else if (_attributes.begin() + index == _attributes.end()){
+      _attributes.push_back((T) value_id);
     } else {
       throw std::runtime_error("Out of Bounds"); 
     }
