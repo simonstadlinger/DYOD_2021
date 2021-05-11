@@ -154,7 +154,7 @@ TEST_F(StorageDictionarySegmentTest, MemoryUsage) {
   auto actualValue = dict_col->estimate_memory_usage();
   EXPECT_EQ(50, actualValue);
   // 10 elements of size int (4 bytes)
-  // dictionary (11 values): 10 * 4 = 40 bytes
+  // dictionary (10 values): 10 * 4 = 40 bytes
   // attribute_vector (uint_8): 20 * 1 = 20
   // 20 + 40 = 60
   for (int i = 0; i < 10; i += 1) {
