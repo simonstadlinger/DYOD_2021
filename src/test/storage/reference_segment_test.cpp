@@ -22,7 +22,7 @@ namespace opossum {
 
 // class ReferenceSegmentTest : public BaseTest {
 //   virtual void SetUp() {
-//     _test_table = std::make_shared<opossum::Table>(opossum::Table(3));
+//     _test_table = std::make_shared<Table>(3);
 //     _test_table->add_column("a", "int");
 //     _test_table->add_column("b", "float");
 //     _test_table->append({123, 456.7f});
@@ -31,7 +31,7 @@ namespace opossum {
 //     _test_table->append({54321, 458.7f});
 //     _test_table->append({12345, 458.7f});
 
-//     _test_table_dict = std::make_shared<opossum::Table>(5);
+//     _test_table_dict = std::make_shared<Table>(5);
 //     _test_table_dict->add_column("a", "int");
 //     _test_table_dict->add_column("b", "int");
 //     for (int i = 0; i <= 24; i += 2) _test_table_dict->append({i, 100 + i});
@@ -43,7 +43,7 @@ namespace opossum {
 //   }
 
 //  public:
-//   std::shared_ptr<opossum::Table> _test_table, _test_table_dict;
+//   std::shared_ptr<Table> _test_table, _test_table_dict;
 // };
 
 // TEST_F(ReferenceSegmentTest, IsImmutable) {

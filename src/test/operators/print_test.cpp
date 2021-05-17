@@ -15,7 +15,7 @@ namespace opossum {
 // class OperatorsPrintTest : public BaseTest {
 //  protected:
 //   void SetUp() override {
-//     t = std::make_shared<Table>(Table(chunk_size));
+//     t = std::make_shared<Table>(chunk_size);
 //     t->add_column("col_1", "int");
 //     t->add_column("col_2", "string");
 //     StorageManager::get().add_table(table_name, t);
@@ -30,7 +30,7 @@ namespace opossum {
 
 //   uint32_t chunk_size = 10;
 
-//   std::shared_ptr<GetTable>(gt);
+//   std::shared_ptr<GetTable> gt;
 //   std::shared_ptr<Table> t = nullptr;
 // };
 
@@ -42,7 +42,7 @@ namespace opossum {
 //  public:
 //   explicit PrintWrapper(const std::shared_ptr<AbstractOperator> in) : Print(in), tab(in->get_output()) {}
 //   std::vector<uint16_t> test_column_string_widths(uint16_t min, uint16_t max) {
-//     return column_string_widths(min, max, tab);
+//     return _column_string_widths(min, max, tab);
 //   }
 // };
 
