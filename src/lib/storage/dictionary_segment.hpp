@@ -134,7 +134,7 @@ class DictionarySegment : public BaseSegment {
     }
 
     for (size_t all_values_index = 0; all_values_index < size; all_values_index++) {
-      const auto value = type_cast<T>(all_values.at(all_values_index));
+      const auto value = type_cast<T>(all_values[all_values_index]);
       auto dictionary_iterator = std::lower_bound(raw_dictionary.begin(), raw_dictionary.end(), value);
       uint32_t dictionary_index = dictionary_iterator - raw_dictionary.begin();
       _attribute_vector->set(all_values_index, static_cast<ValueID>(dictionary_index));
