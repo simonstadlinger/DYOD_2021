@@ -113,14 +113,12 @@ class DictionarySegment : public BaseSegment {
     auto raw_dictionary_vector = std::move(values);
     std::vector<T> raw_values = raw_dictionary_vector;
 
-    // std::sort(raw_dictionary.begin(), raw_dictionary.end());
-    // raw_dictionary.erase(std::unique(raw_dictionary.begin(), raw_dictionary.end()), raw_dictionary.end());
+    std::set<T> s( raw_dictionary_vector.begin(), raw_dictionary_vector.end() );
+    raw_dictionary_vector.assign( s.begin(), s.end() );
 
-    std::set<T> raw_dictionary (raw_dictionary_vector);
+    _dictionary = std::make_shared<std::vector<T>>(raw_dictionary_vector);
 
-    _dictionary = std::make_shared<std::vector<T>>(raw_dictionary);
-
-    _build_attribute_vector(raw_dictionary, raw_values);
+    _build_attribute_vector(raw_dictionary_vector, raw_values);
   }
 
   void _build_attribute_vector(std::vector<T>& raw_dictionary, std::vector<T>& all_values) {
