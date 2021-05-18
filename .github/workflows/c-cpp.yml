@@ -1,13 +1,11 @@
 name: Test
 
 on:
-  push:
-    branches: [ 'sprint-2' ]
   pull_request:
-    branches: [ 'sprint-2' ]
+    branches: [ '**' ]
 
 jobs:
-  test:
+  format_lint_test:
 
     runs-on: ${{ matrix.os }}
     strategy:
@@ -25,5 +23,7 @@ jobs:
       run: mkdir cmake-build-debug && cd cmake-build-debug && cmake ..
     - name: Make
       run: cd cmake-build-debug && make -j4 hyriseTest
+    - name: Lint
+      run: ./scripts/lint.sh
     - name: Run Tests
       run: ./cmake-build-debug/hyriseTest

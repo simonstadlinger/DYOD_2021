@@ -28,9 +28,13 @@ ChunkOffset ValueSegment<T>::size() const {
 }
 
 template <typename T>
+const std::vector<T>& ValueSegment<T>::values() const {
+  return _values;
+}
+
+template <typename T>
 size_t ValueSegment<T>::estimate_memory_usage() const {
-  // Implementation goes here
-  return 0;
+  return size() * sizeof(T);
 }
 
 EXPLICITLY_INSTANTIATE_DATA_TYPES(ValueSegment);

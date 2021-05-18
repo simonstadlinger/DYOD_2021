@@ -81,7 +81,12 @@ class Table : private Noncopyable {
   std::vector<std::shared_ptr<Chunk>> _chunks;
   std::vector<std::string> _col_names;
   std::vector<std::string> _col_types;
+  mutable std::mutex _chunk_lock;
 
-  void _add_segment_to_chunk(std::shared_ptr<Chunk> chunk, std::string type);
+  void _add_segment_to_chunk(std::shared_ptr<Chunk> chunk, const std::string& type);
+  std::shared_ptr<Chunk> _compress_multithreaded(Chunk& uncompressed_chunk);
+  void _compress_column(Chunk& uncompressed_chunk, std::shared_ptr<Chunk>& compressed_chunk, ColumnID col_id) const;
+  Chunk& _get_chunk(ChunkID chunk_id) const;
 };
+
 }  // namespace opossum

@@ -1,6 +1,4 @@
 #include <iomanip>
-#include <iterator>
-#include <limits>
 #include <memory>
 #include <mutex>
 #include <string>
@@ -14,7 +12,10 @@
 
 namespace opossum {
 
-void Chunk::add_segment(std::shared_ptr<BaseSegment> segment) { _segments.push_back(segment); }
+void Chunk::add_segment(std::shared_ptr<BaseSegment> segment) {
+  std::lock_guard<std::mutex> lock(_add_segment_lock);
+  _segments.push_back(segment);
+}
 
 void Chunk::append(const std::vector<AllTypeVariant>& values) {
   Assert(values.size() == _segments.size(), "Invalid number of columns to be inserted");
