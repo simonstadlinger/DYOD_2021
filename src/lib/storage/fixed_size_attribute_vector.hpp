@@ -10,7 +10,7 @@ namespace opossum {
 template <typename T>
 class FixedSizeAttributeVector : public BaseAttributeVector {
  public:
-  explicit FixedSizeAttributeVector(size_t attribute_vector_size) { _attributes.reserve(attribute_vector_size); }
+  explicit FixedSizeAttributeVector(size_t attribute_vector_size) { _attributes = std::vector<T>(attribute_vector_size); }
 
   ~FixedSizeAttributeVector() = default;
 
