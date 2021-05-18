@@ -6,6 +6,7 @@
 #include <string>
 #include <utility>
 #include <vector>
+#include <set>
 
 #include "all_type_variant.hpp"
 #include "fixed_size_attribute_vector.hpp"
@@ -109,11 +110,13 @@ class DictionarySegment : public BaseSegment {
   std::shared_ptr<BaseAttributeVector> _attribute_vector;
 
   void _build_compressed_dictionary(const std::vector<T>& values) {
-    auto raw_dictionary = std::move(values);
-    std::vector<T> raw_values = raw_dictionary;
+    auto raw_dictionary_vector = std::move(values);
+    std::vector<T> raw_values = raw_dictionary_vector;
 
-    std::sort(raw_dictionary.begin(), raw_dictionary.end());
-    raw_dictionary.erase(std::unique(raw_dictionary.begin(), raw_dictionary.end()), raw_dictionary.end());
+    // std::sort(raw_dictionary.begin(), raw_dictionary.end());
+    // raw_dictionary.erase(std::unique(raw_dictionary.begin(), raw_dictionary.end()), raw_dictionary.end());
+
+    std::set<T> raw_dictionary (raw_dictionary_vector);
 
     _dictionary = std::make_shared<std::vector<T>>(raw_dictionary);
 
