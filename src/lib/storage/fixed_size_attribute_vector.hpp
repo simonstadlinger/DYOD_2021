@@ -25,13 +25,7 @@ class FixedSizeAttributeVector : public BaseAttributeVector {
   ValueID get(const size_t i) const { return static_cast<ValueID>(_attributes.at(i)); }
 
   // sets the value id at a given position
-  void set(const size_t index, const ValueID value_id) {
-    // [] operator does somehow not change the size of the vector
-    // according to this stackoverflow answer it's considered bad practice to just use the [] operator
-    // https://stackoverflow.com/questions/31372809/c-vector-size-is-returning-zero
-    // nevertheless, this does not feel right.
-    _attributes.at(index) = static_cast<T>(value_id);
-  }
+  void set(const size_t index, const ValueID value_id) { _attributes.at(index) = static_cast<T>(value_id); }
 
   // returns the number of values
   size_t size() const { return _attributes.size(); }

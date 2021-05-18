@@ -124,11 +124,9 @@ class DictionarySegment : public BaseSegment {
   void _build_attribute_vector(std::vector<T>& raw_dictionary, std::vector<T>& all_values) {
     size_t size = all_values.size();
 
-    const int required_width = std::ceil(std::log2(size));
-
-    if (required_width <= 8) {
+    if (size < std::numeric_limits<uint8_t>::max()) {
       _attribute_vector = std::make_shared<FixedSizeAttributeVector<uint8_t>>(size);
-    } else if (required_width <= 16) {
+    } else if (size < std::numeric_limits<uint16_t>::max()) {
       _attribute_vector = std::make_shared<FixedSizeAttributeVector<uint16_t>>(size);
     } else {
       _attribute_vector = std::make_shared<FixedSizeAttributeVector<uint32_t>>(size);
