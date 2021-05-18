@@ -121,8 +121,6 @@ class DictionarySegment : public BaseSegment {
   }
 
   void _build_attribute_vector(std::vector<T>& raw_dictionary, std::vector<T>& all_values) {
-    std::vector<uint32_t> raw_vector{};
-    raw_vector.reserve(all_values.size());
     size_t size = all_values.size();
 
     const int required_width = std::ceil(std::log2(size));
