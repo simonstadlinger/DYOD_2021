@@ -3,10 +3,10 @@
 #include <algorithm>
 #include <limits>
 #include <memory>
+#include <set>
 #include <string>
 #include <utility>
 #include <vector>
-#include <set>
 
 #include "all_type_variant.hpp"
 #include "fixed_size_attribute_vector.hpp"
@@ -113,8 +113,8 @@ class DictionarySegment : public BaseSegment {
     auto raw_dictionary_vector = std::move(values);
     std::vector<T> raw_values = raw_dictionary_vector;
 
-    std::set<T> s( raw_dictionary_vector.begin(), raw_dictionary_vector.end() );
-    raw_dictionary_vector.assign( s.begin(), s.end() );
+    std::set<T> s(raw_dictionary_vector.begin(), raw_dictionary_vector.end());
+    raw_dictionary_vector.assign(s.begin(), s.end());
 
     _dictionary = std::make_shared<std::vector<T>>(raw_dictionary_vector);
 
