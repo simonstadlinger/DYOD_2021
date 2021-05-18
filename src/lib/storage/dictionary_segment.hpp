@@ -3,6 +3,7 @@
 #include <algorithm>
 #include <limits>
 #include <memory>
+#include <set>
 #include <string>
 #include <utility>
 #include <vector>
@@ -109,15 +110,15 @@ class DictionarySegment : public BaseSegment {
   std::shared_ptr<BaseAttributeVector> _attribute_vector;
 
   void _build_compressed_dictionary(const std::vector<T>& values) {
-    auto raw_dictionary = std::move(values);
-    std::vector<T> raw_values = raw_dictionary;
+    auto raw_dictionary_vector = std::move(values);
+    std::vector<T> raw_values = raw_dictionary_vector;
 
-    std::sort(raw_dictionary.begin(), raw_dictionary.end());
-    raw_dictionary.erase(std::unique(raw_dictionary.begin(), raw_dictionary.end()), raw_dictionary.end());
+    std::set<T> s(raw_dictionary_vector.begin(), raw_dictionary_vector.end());
+    raw_dictionary_vector.assign(s.begin(), s.end());
 
-    _dictionary = std::make_shared<std::vector<T>>(raw_dictionary);
+    _dictionary = std::make_shared<std::vector<T>>(raw_dictionary_vector);
 
-    _build_attribute_vector(raw_dictionary, raw_values);
+    _build_attribute_vector(raw_dictionary_vector, raw_values);
   }
 
   void _build_attribute_vector(std::vector<T>& raw_dictionary, std::vector<T>& all_values) {
