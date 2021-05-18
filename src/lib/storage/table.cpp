@@ -143,8 +143,8 @@ void Table::_compress_column(Chunk& uncompressed_chunk, std::shared_ptr<Chunk>& 
                              ColumnID col_id) const {
   const auto& column_segment = uncompressed_chunk.get_segment(col_id);
 
-  resolve_data_type(column_type(col_id), [&](const auto data_type_t) {
-    using ColumnDataType = typename decltype(data_type_t)::type;
+  resolve_data_type(column_type(col_id), [&](const auto col_type_string) {
+    using ColumnDataType = typename decltype(col_type_string)::type;
     const auto compressed_segment = std::make_shared<DictionarySegment<ColumnDataType>>(column_segment);
     compressed_chunk->add_segment(compressed_segment);
   });
