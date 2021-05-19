@@ -32,7 +32,7 @@ To configure a build directory for a release build make sure it is empty and cal
 `./scripts/format.sh` (clang-format is used.)
 
 ### Test
-Calling `make hyriseTest` from the build directory builds all available tests.
+Calling `make hyriseTest` from the build directory builds all available tests. Run tests from the root directory, e.g., `./cmake-build-debug/hyriseTest`.
 
 ### Coverage
 After building `hyriseCoverage`, `./scripts/coverage.sh <build dir>` will print a summary to the command line and create detailed html reports at ./coverage/index.html
