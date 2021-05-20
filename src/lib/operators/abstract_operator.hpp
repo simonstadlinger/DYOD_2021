@@ -1,9 +1,9 @@
 #pragma once
 
+#include <boost/thread/once.hpp>
 #include <memory>
 #include <string>
 #include <vector>
-#include <boost/thread/once.hpp>
 #include "types.hpp"
 
 namespace opossum {
@@ -47,7 +47,6 @@ class AbstractOperator : private Noncopyable {
   // abstract method to actually execute the operator
   // execute and get_output are split into two methods to allow for easier
   // asynchronous execution
-
 
   virtual std::shared_ptr<const Table> _on_execute() = 0;
 

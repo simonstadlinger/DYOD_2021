@@ -5,15 +5,15 @@
 #include <utility>
 #include <vector>
 
-#include "abstract_operator.hpp"
 #include "../storage/storage_manager.hpp"
+#include "abstract_operator.hpp"
 
 namespace opossum {
 
 // operator to retrieve a table from the StorageManager by specifying its name
 class GetTable : public AbstractOperator {
  public:
-  explicit GetTable(std::string table_name): _name(std::move(table_name)) {}
+  explicit GetTable(std::string table_name) : _name(std::move(table_name)) {}
 
   [[nodiscard]] const std::string& table_name() const { return _name; }
 
