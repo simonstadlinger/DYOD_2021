@@ -131,7 +131,7 @@ namespace opossum {
 // }
 
 // TEST_F(OperatorsTableScanTest, ScanOnDictColumn) {
-//   // we do not need to check for a non existing value, because that happens automatically when we scan the second chunk
+// //we do not need to check for a non existing value, because that happens automatically when we scan the second chunk
 
 //   std::map<ScanType, std::vector<AllTypeVariant>> tests;
 //   tests[ScanType::OpEquals] = {104};
@@ -149,7 +149,7 @@ namespace opossum {
 // }
 
 // TEST_F(OperatorsTableScanTest, ScanOnReferencedDictColumn) {
-//   // we do not need to check for a non existing value, because that happens automatically when we scan the second chunk
+// // we do not need to check for a non existing value, because that happens automatically when we scan the second chunk
 
 //   std::map<ScanType, std::vector<AllTypeVariant>> tests;
 //   tests[ScanType::OpEquals] = {104};
@@ -253,7 +253,8 @@ namespace opossum {
 // TEST_F(OperatorsTableScanTest, ScanOnWideDictionarySegment) {
 //   // 2**8 + 1 values require a data type of 16bit.
 //   const auto table_wrapper_dict_16 = get_table_op_with_n_dict_entries((1 << 8) + 1);
-//   auto scan_1 = std::make_shared<opossum::TableScan>(table_wrapper_dict_16, ColumnID{0}, ScanType::OpGreaterThan, 200);
+//   auto scan_1 = std::make_shared<opossum::TableScan>(
+//   table_wrapper_dict_16, ColumnID{0}, ScanType::OpGreaterThan, 200);
 //   scan_1->execute();
 
 //   EXPECT_EQ(scan_1->get_output()->row_count(), static_cast<size_t>(57));

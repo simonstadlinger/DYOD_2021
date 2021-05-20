@@ -24,7 +24,6 @@ class Table;
 
 class AbstractOperator : private Noncopyable {
  public:
-
   AbstractOperator(const std::shared_ptr<const AbstractOperator> left = nullptr,
                    const std::shared_ptr<const AbstractOperator> right = nullptr);
 
@@ -55,7 +54,6 @@ class AbstractOperator : private Noncopyable {
   std::shared_ptr<const Table> _left_input_table() const;
   std::shared_ptr<const Table> _right_input_table() const;
 
-  //wrapper function to allow tracking of method calls in public execute interface.
   bool _has_been_executed;
 
   // Shared pointers to input operators, can be nullptr.
