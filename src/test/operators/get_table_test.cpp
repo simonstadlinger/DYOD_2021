@@ -29,4 +29,15 @@ TEST_F(OperatorsGetTableTest, ThrowsUnknownTableName) {
   EXPECT_THROW(gt->execute(), std::exception) << "Should throw unknown table name exception";
 }
 
+TEST_F(OperatorsGetTableTest, ThrowsMultipleExecutions) {
+  auto gt = std::make_shared<GetTable>("aNiceTestTable");
+  gt->execute();
+  EXPECT_THROW(gt->execute(), std::runtime_error) << "Should throw multiple exceptions exception";
+}
+
+TEST_F(OperatorsGetTableTest, ThrowOutputBeforeExecution) {
+  auto gt = std::make_shared<GetTable>("aNiceTestTable");
+  EXPECT_THROW(gt->get_output(), std::exception) << "Should throw multiple exceptions exception";
+}
+
 }  // namespace opossum
