@@ -35,9 +35,9 @@ TEST_F(OperatorsGetTableTest, ThrowsMultipleExecutions) {
   EXPECT_THROW(gt->execute(), std::runtime_error) << "Should throw multiple exceptions exception";
 }
 
-TEST_F(OperatorsGetTableTest, ThrowOutputBeforeExecution) {
+TEST_F(OperatorsGetTableTest, NullPointerOnOutputBeforeExectuion) {
   auto gt = std::make_shared<GetTable>("aNiceTestTable");
-  EXPECT_THROW(gt->get_output(), std::exception) << "Should throw multiple exceptions exception";
+  EXPECT_EQ(gt->get_output(), std::nullptr_t());
 }
 
 }  // namespace opossum

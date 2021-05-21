@@ -24,9 +24,11 @@ void AbstractOperator::execute() {
 }
 
 std::shared_ptr<const Table> AbstractOperator::get_output() const {
-  // TODO(anyone): You should place some meaningful checks here
-  Assert(_has_been_executed, "Operator has to be executed first to yield output.");
-  return _output;
+  if(_has_been_executed) {
+    return _output;
+  } else {
+    return std::nullptr_t();
+  }
 }
 
 std::shared_ptr<const Table> AbstractOperator::_left_input_table() const { return _left_input->get_output(); }
