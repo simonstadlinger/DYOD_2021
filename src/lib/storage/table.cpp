@@ -23,6 +23,10 @@ Table::Table(const ChunkOffset target_chunk_size) : _max_chunk_size{target_chunk
   _chunks.push_back(std::make_shared<Chunk>());
 }
 
+Table::Table(std::shared_ptr<Chunk> first_chunk) : _max_chunk_size(first_chunk->size()) {
+  _chunks.push_back(first_chunk);
+}
+
 void Table::add_column_definition(const std::string& name, const std::string& type) {
   // Implementation goes here
 }
@@ -146,7 +150,6 @@ std::shared_ptr<Chunk> Table::_compress_multithreaded(Chunk& uncompressed_chunk)
 
   return compressed_chunk;
 }
-
 void Table::_compress_column(Chunk& uncompressed_chunk, std::shared_ptr<Chunk>& compressed_chunk,
                              ColumnID col_id) const {
   const auto& column_segment = uncompressed_chunk.get_segment(col_id);
