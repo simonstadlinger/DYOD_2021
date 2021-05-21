@@ -23,7 +23,7 @@ namespace opossum {
 class OperatorsTableScanTest : public BaseTest {
  protected:
   void SetUp() override {
-    _table_wrapper = std::make_shared<TableWrapper>(load_table("src/test/tables/int_float.tbl", 2));
+    _table_wrapper = std::make_shared<TableWrapper>(load_table("../src/test/tables/int_float.tbl", 2));
     _table_wrapper->execute();
 
     std::shared_ptr<Table> test_even_dict = std::make_shared<Table>(5);
@@ -102,7 +102,7 @@ class OperatorsTableScanTest : public BaseTest {
 };
 
 TEST_F(OperatorsTableScanTest, DoubleScan) {
-  std::shared_ptr<Table> expected_result = load_table("src/test/tables/int_float_filtered.tbl", 2);
+  std::shared_ptr<Table> expected_result = load_table("../src/test/tables/int_float_filtered.tbl", 2);
 
   auto scan_1 = std::make_shared<TableScan>(_table_wrapper, ColumnID{0}, ScanType::OpGreaterThanEquals, 1234);
   scan_1->execute();

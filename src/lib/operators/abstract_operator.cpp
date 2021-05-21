@@ -18,6 +18,7 @@ void AbstractOperator::execute() {
   if (!_has_been_executed) {
     _has_been_executed = true;
     _output = _on_execute();
+
   } else {
     throw std::runtime_error("Operators can only be executed once");
   }
