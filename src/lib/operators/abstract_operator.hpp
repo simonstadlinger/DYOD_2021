@@ -3,7 +3,6 @@
 #include <memory>
 #include <string>
 #include <vector>
-
 #include "types.hpp"
 
 namespace opossum {
@@ -47,10 +46,13 @@ class AbstractOperator : private Noncopyable {
   // abstract method to actually execute the operator
   // execute and get_output are split into two methods to allow for easier
   // asynchronous execution
+
   virtual std::shared_ptr<const Table> _on_execute() = 0;
 
   std::shared_ptr<const Table> _left_input_table() const;
   std::shared_ptr<const Table> _right_input_table() const;
+
+  bool _has_been_executed;
 
   // Shared pointers to input operators, can be nullptr.
   std::shared_ptr<const AbstractOperator> _left_input;
