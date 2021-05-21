@@ -1,6 +1,5 @@
 #pragma once
 
-#include <boost/thread/once.hpp>
 #include <memory>
 #include <string>
 #include <vector>
