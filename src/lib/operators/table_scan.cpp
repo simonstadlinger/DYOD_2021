@@ -150,13 +150,13 @@ std::shared_ptr<const Table> TableScan::_on_execute() {
 
   // for each col, create Reference Segment and append to table
   auto column_count = input_table->column_count();
-  auto final_chunk = std::make_shared<Chunk>();
+  std::shared_ptr<Chunk> final_chunk = std::make_shared<Chunk>();
   for(auto column_id = ColumnID{0}; column_id < column_count; column_id++) {
     const auto& reference_segment = std::make_shared<ReferenceSegment>(input_table, column_id,  pos_list);
     final_chunk->add_segment(reference_segment);
   }
   // Why is this not working? I just want to append the fucking chunk
-  output_table->emplace_chunk(*final_chunk);
+  output_table->emplace_chunk(final_chunk);
 
   return output_table;
 }
