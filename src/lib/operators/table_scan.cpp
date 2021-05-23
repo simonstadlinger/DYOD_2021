@@ -37,6 +37,7 @@ std::shared_ptr<const Table> TableScan::_on_execute() {
   auto output_table = std::make_shared<Table>(input_table->target_chunk_size());
 
   auto pos_list = std::make_shared<PosList>();
+
   // set operator function based on scan type
   std::function<bool(AllTypeVariant, AllTypeVariant)> _operator;
   switch (_scan_type) {
@@ -94,47 +95,68 @@ std::shared_ptr<const Table> TableScan::_on_execute() {
       segment = ref_segment->referenced_table()->get_chunk(chunk_id).get_segment(_column_id);
     }
 
-    // set accessor for different segment types
+    // Fill position list for different segment types
     std::function<AllTypeVariant (ChunkOffset, const std::shared_ptr<BaseSegment>&)> _accessor;
     resolve_data_type(col_type, [&](const auto data_type_t) {
       using Type = typename decltype(data_type_t)::type;
       segment = std::dynamic_pointer_cast<ValueSegment<Type>>(segment);
       if(segment) {
-        segment = std::dynamic_pointer_cast<ValueSegment<Type>>(segment);
-        _accessor = [&](ChunkOffset row_id, const std::shared_ptr<BaseSegment>& segment) {
-          return segment[row_id];
-        };
-      } else {
-        segment = std::dynamic_pointer_cast<DictionarySegment<Type>>(segment);
-        _accessor = [&](ChunkOffset row_id, const std::shared_ptr<BaseSegment>& segment) {
-          return segment[row_id];
-        };
-      }
 
-      // do the actual comparison and fill position list
-      if(!is_ref_table) {
-        auto chunk_size = chunk.size();
-        for(auto chunk_offset = ChunkOffset{0}; chunk_offset < chunk_size; ++chunk_offset) {
-          // TODO: extract method
-          auto comparison_value = _accessor(chunk_offset, segment);
-          if(_operator(_search_value, comparison_value)) {
-            pos_list->push_back(RowID{chunk_id, chunk_offset});
+        // Value Segment
+        if(!is_ref_table) {
+          auto chunk_size = chunk.size();
+          for(auto chunk_offset = ChunkOffset{0}; chunk_offset < chunk_size; ++chunk_offset) {
+            // TODO: extract method
+            auto comparison_value = std::dynamic_pointer_cast<ValueSegment<Type>>(segment)->values()[chunk_offset];
+            if(_operator(_search_value, comparison_value)) {
+              pos_list->push_back(RowID{chunk_id, chunk_offset});
+            }
+          }
+        } else {
+          for(auto position: *(ref_segment->pos_list())) {
+            auto chunk_offset = position.chunk_offset;
+            auto comparison_value = std::dynamic_pointer_cast<ValueSegment<Type>>(segment)->values()[chunk_offset];
+            if(_operator(_search_value, comparison_value)) {
+              pos_list->push_back(RowID{chunk_id, chunk_offset});
+            }
           }
         }
+
       } else {
-        for(auto position: *(ref_segment->pos_list())) {
-          auto chunk_offset = position.chunk_offset;
-          auto comparison_value = _accessor(chunk_offset, segment);
-          if(_operator(_search_value, comparison_value)) {
-            pos_list->push_back(RowID{chunk_id, chunk_offset});
+
+        // Dictionary Segment
+        if(!is_ref_table) {
+          auto chunk_size = chunk.size();
+          for(auto chunk_offset = ChunkOffset{0}; chunk_offset < chunk_size; ++chunk_offset) {
+            // TODO: extract method
+            auto comparison_value = std::dynamic_pointer_cast<DictionarySegment<Type>>(segment)->get(chunk_offset);
+            if(_operator(_search_value, comparison_value)) {
+              pos_list->push_back(RowID{chunk_id, chunk_offset});
+            }
+          }
+        } else {
+          for(auto position: *(ref_segment->pos_list())) {
+            auto chunk_offset = position.chunk_offset;
+            auto comparison_value = std::dynamic_pointer_cast<DictionarySegment<Type>>(segment)->get(chunk_offset);
+            if(_operator(_search_value, comparison_value)) {
+              pos_list->push_back(RowID{chunk_id, chunk_offset});
+            }
           }
         }
       }
-
-
     });
 
   }
+
+  // for each col, create Reference Segment and append to table
+  auto column_count = input_table->column_count();
+  auto final_chunk = std::make_shared<Chunk>();
+  for(auto column_id = ColumnID{0}; column_id < column_count; column_id++) {
+    const auto& reference_segment = std::make_shared<ReferenceSegment>(input_table, column_id,  pos_list);
+    final_chunk->add_segment(reference_segment);
+  }
+  // Why is this not working? I just want to append the fucking chunk
+  output_table->emplace_chunk(*final_chunk);
 
   return output_table;
 }
