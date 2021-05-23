@@ -24,7 +24,7 @@ class ReferenceSegment : public BaseSegment {
   // creates a reference segment
   // the parameters specify the positions and the referenced segment
   ReferenceSegment(const std::shared_ptr<const Table>& referenced_table, const ColumnID referenced_column_id,
-                   const std::shared_ptr<const PosList>& pos)
+                   const std::shared_ptr<const PosList> pos)
       : _ref_table(referenced_table), _ref_col_id(referenced_column_id), _pos_list(pos) {}
 
   AllTypeVariant operator[](const ChunkOffset chunk_offset) const override {
@@ -58,7 +58,7 @@ class ReferenceSegment : public BaseSegment {
  protected:
   const std::shared_ptr<const Table>& _ref_table;
   const ColumnID _ref_col_id;
-  const std::shared_ptr<const PosList>& _pos_list;
+  const std::shared_ptr<const PosList> _pos_list;
 };
 
 }  // namespace opossum

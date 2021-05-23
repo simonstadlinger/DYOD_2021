@@ -103,10 +103,13 @@ const Chunk& Table::get_chunk(ChunkID chunk_id) const {
   return std::as_const(_get_chunk(chunk_id));
 }
 
-void Table::emplace_chunk(std::shared_ptr<Chunk> chunk_ptr) {
-  //auto chunk_ptr = (std::shared_ptr<Chunk>(& chunk));
-  //if(_chunks[0]->size() == 0) _chunks[0] = chunk_ptr{}
-  _chunks.push_back(chunk_ptr);
+void Table::emplace_chunk(std::shared_ptr<Chunk> chunk) {
+  if(_chunks[0]->size() == 0) {
+    _chunks[0] = chunk;
+  }
+  else {
+    _chunks.push_back(chunk);
+  }
 }
 
 Chunk& Table::_get_chunk(ChunkID chunk_id) const { return *_chunks.at(chunk_id); }

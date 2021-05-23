@@ -72,6 +72,7 @@ void BaseTest::_print_matrix(const BaseTest::Matrix& matrix) {
   Matrix right = _table_to_matrix(tright);
   // compare schema of tables
   //  - column count
+
   if (tleft.column_count() != tright.column_count()) {
     _print_matrix(left);
     _print_matrix(right);
