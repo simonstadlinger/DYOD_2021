@@ -30,6 +30,8 @@ class TableScan : public AbstractOperator {
   const ColumnID _column_id;
   const ScanType _scan_type;
   const AllTypeVariant _search_value;
+  void _set_comparator_method();
+  std::function<bool(AllTypeVariant, AllTypeVariant)> _comparator;
 };
 
 }  // namespace opossum
