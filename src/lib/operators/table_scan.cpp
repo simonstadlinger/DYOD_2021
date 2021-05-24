@@ -69,13 +69,11 @@ void TableScan::_set_comparator_method() {
 
 std::shared_ptr<const Table> TableScan::_on_execute() {
 
-
   auto input_table = _in_operator->get_output();
 
   // create empty output table
   auto output_table = std::make_shared<Table>(input_table->target_chunk_size());
 
-  auto pos_list = std::make_shared<PosList>();
 
   // check if input table contains reference segments
   bool is_ref_table = false;
@@ -83,24 +81,28 @@ std::shared_ptr<const Table> TableScan::_on_execute() {
   const auto& probe_segment = probe_chunk.get_segment(ColumnID{0});
 
   auto probe_ref_segment = std::dynamic_pointer_cast<ReferenceSegment>(probe_segment);
+  std::shared_ptr<const Table> orig_input_table;
   if(probe_ref_segment) {
+    orig_input_table = input_table;
     is_ref_table = true;
     input_table = probe_ref_segment->referenced_table();
+
   }
 
 
   auto col_type = input_table->column_type(_column_id);
   auto chunk_count = input_table->chunk_count();
+  auto column_count = input_table->column_count();
   for(auto chunk_id = ChunkID{0}; chunk_id < chunk_count; ++chunk_id) {
+    auto pos_list = std::make_shared<PosList>();
     auto& chunk = input_table->get_chunk(chunk_id);
     std::shared_ptr<BaseSegment> segment = chunk.get_segment(_column_id);
     std::shared_ptr<ReferenceSegment> ref_segment;
     if(is_ref_table) {
-      ref_segment = std::dynamic_pointer_cast<ReferenceSegment>(segment);
+      ref_segment = std::dynamic_pointer_cast<ReferenceSegment>(orig_input_table->get_chunk(ChunkID{0}).get_segment(_column_id));
     }
 
     // Fill position list for different segment types
-    std::function<AllTypeVariant (ChunkOffset, const std::shared_ptr<BaseSegment>&)> _accessor;
     resolve_data_type(col_type, [&](const auto data_type_t) {
       using Type = typename decltype(data_type_t)::type;
       segment = std::dynamic_pointer_cast<ValueSegment<Type>>(segment);
@@ -152,18 +154,20 @@ std::shared_ptr<const Table> TableScan::_on_execute() {
       }
     });
 
+    // create output chunk for input chunk;
+    std::shared_ptr<Chunk> final_chunk = std::make_shared<Chunk>();
+    for(auto column_id = ColumnID{0}; column_id < column_count; column_id++) {
+      const auto& reference_segment = std::make_shared<ReferenceSegment>(input_table, column_id,  pos_list);
+      final_chunk->add_segment(reference_segment);
+      output_table->add_column_definition(input_table->column_name(column_id), input_table->column_type(column_id));
+    }
+
+    output_table->emplace_chunk(final_chunk);
   }
 
   // for each col, create Reference Segment and append to table
-  auto column_count = input_table->column_count();
-  std::shared_ptr<Chunk> final_chunk = std::make_shared<Chunk>();
-  for(auto column_id = ColumnID{0}; column_id < column_count; column_id++) {
-    const auto& reference_segment = std::make_shared<ReferenceSegment>(input_table, column_id,  pos_list);
-    final_chunk->add_segment(reference_segment);
-    output_table->add_column_definition(input_table->column_name(column_id), input_table->column_type(column_id));
-  }
-  
-  output_table->emplace_chunk(final_chunk);
+
+
 
   return output_table;
 }
