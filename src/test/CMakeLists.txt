@@ -47,7 +47,7 @@ set(
 include_directories(${CMAKE_CURRENT_SOURCE_DIR})
 
 # Configure hyriseTest
-add_executable(hyriseTest ${HYRISE_TEST_SOURCES})
+add_executable(hyriseTest ${HYRISE_TEST_SOURCES} ../lib/operators/table_scan.cpp)
 target_link_libraries(hyriseTest hyrise ${LIBRARIES})
 
 # Configure hyriseCoverageApp
