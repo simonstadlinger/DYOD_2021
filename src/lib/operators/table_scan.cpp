@@ -79,6 +79,8 @@ std::shared_ptr<const Table> TableScan::_on_execute() {
       resolve_data_type(col_type, [&](const auto data_type_t) {
         using Type = typename decltype(data_type_t)::type;
 
+        Assert((_search_value.type() == typeid(Type)), "Type of search value and column should be the same");
+
         auto value_segment = std::dynamic_pointer_cast<ValueSegment<Type>>(segment);
         auto _comparator = _get_comparator_method<Type>();
         if (value_segment) {
