@@ -58,4 +58,23 @@ TEST_F(StorageChunkTest, RetrieveSegment) {
   EXPECT_EQ(base_segment->size(), 4u);
 }
 
+TEST_F(StorageChunkTest, AddSegmentOverload) {
+  c.add_segment(string_value_segment);
+  c.add_segment(int_value_segment, ColumnID{0});
+  c.add_segment(string_value_segment);
+  
+  auto base_segment = c.get_segment(ColumnID{0});
+  EXPECT_EQ(base_segment, int_value_segment);
+
+}
+TEST_F(StorageChunkTest, AddSegmentOverloadNoReplace) {
+ 
+  c.add_segment(int_value_segment, ColumnID{0});
+ 
+  
+  auto base_segment = c.get_segment(ColumnID{0});
+  EXPECT_THROW("no segment to replace", std::runtime_error);
+
+}
+
 }  // namespace opossum
