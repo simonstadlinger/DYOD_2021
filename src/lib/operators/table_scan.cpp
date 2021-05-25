@@ -69,6 +69,7 @@ std::shared_ptr<const Table> TableScan::_on_execute() {
   const auto& probe_segment = probe_chunk.get_segment(ColumnID{0});
   auto probe_ref_segment = std::dynamic_pointer_cast<ReferenceSegment>(probe_segment);
   if (probe_ref_segment) {
+  //ref segment
     input_table = probe_ref_segment->referenced_table();
     for (auto position : *(probe_ref_segment->pos_list())) {
       auto chunk_id = position.chunk_id;
@@ -96,6 +97,7 @@ std::shared_ptr<const Table> TableScan::_on_execute() {
       });
     }
   } else {
+  //no ref segment
     auto chunk_count = input_table->chunk_count();
     for (auto chunk_id = ChunkID{0}; chunk_id < chunk_count; ++chunk_id) {
       auto& chunk = input_table->get_chunk(chunk_id);
@@ -121,7 +123,7 @@ std::shared_ptr<const Table> TableScan::_on_execute() {
           auto dictionary_segment = std::dynamic_pointer_cast<DictionarySegment<Type>>(segment);
           auto chunk_size = chunk.size();
           for (auto chunk_offset = ChunkOffset{0}; chunk_offset < chunk_size; ++chunk_offset) {
-            // TODO(anyone): extract method
+            // TODO(anyone): extract method (#48)
             auto comparison_value = type_cast<Type>(dictionary_segment->get(chunk_offset));
             if (_comparator(type_cast<Type>(_search_value), comparison_value)) {
               pos_list->push_back(RowID{chunk_id, chunk_offset});
