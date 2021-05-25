@@ -58,7 +58,7 @@ std::shared_ptr<const Table> TableScan::_on_execute() {
 
   // get characteristics for output table
   auto col_type = input_table->column_type(_column_id);
-  ColumnCount column_count = input_table->column_count();
+  auto column_count = input_table->column_count();
 
   // create empty output table
   auto output_table = std::make_shared<Table>(input_table->target_chunk_size());
@@ -144,7 +144,7 @@ std::shared_ptr<const Table> TableScan::_on_execute() {
   for (auto column_id = ColumnID{0}; ColumnCount{column_id} < column_count; column_id++) {
     // for each col, create Reference Segment and append to table
     const auto& reference_segment = std::make_shared<ReferenceSegment>(input_table, column_id, pos_list);
-    final_chunk->add_segment(reference_segment, column_id);
+    final_chunk->add_segment(reference_segment);
     output_table->add_column_definition(input_table->column_name(column_id), input_table->column_type(column_id));
   }
 
