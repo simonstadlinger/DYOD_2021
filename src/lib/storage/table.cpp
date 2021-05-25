@@ -137,7 +137,7 @@ void Table::compress_chunk(ChunkID chunk_id) {
 }
 
 std::shared_ptr<Chunk> Table::_compress_multithreaded(Chunk& uncompressed_chunk) {
-  auto col_count = column_count();
+  ColumnCount col_count = column_count();
   auto compressed_chunk = std::make_shared<Chunk>(col_count);
   std::vector<std::thread> column_threads = {};
   column_threads.reserve(col_count);

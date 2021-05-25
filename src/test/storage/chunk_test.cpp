@@ -23,7 +23,6 @@ class StorageChunkTest : public BaseTest {
     string_value_segment->append("world");
     string_value_segment->append("!");
   }
-
   Chunk c;
   std::shared_ptr<BaseSegment> int_value_segment = nullptr;
   std::shared_ptr<BaseSegment> string_value_segment = nullptr;
@@ -67,14 +66,21 @@ TEST_F(StorageChunkTest, AddSegmentOverload) {
   EXPECT_EQ(base_segment, int_value_segment);
 
 }
-TEST_F(StorageChunkTest, AddSegmentOverloadNoReplace) {
- 
-  c.add_segment(int_value_segment, ColumnID{0});
- 
-  
-  auto base_segment = c.get_segment(ColumnID{0});
-  EXPECT_THROW("no segment to replace", std::runtime_error);
+TEST_F(StorageChunkTest, AddSegmentOverloadWrongConstruction) {
+
+  EXPECT_THROW(c.add_segment(int_value_segment, ColumnID{0}), std::exception);
 
 }
+
+// TEST_F(StorageChunkTest, AssertConstruction) {
+//   ColumnCount col_count = ColumnCount{3};
+//   auto d = std::make_shared<Chunk>(col_count);
+//   EXPECT_EQ(d->size(), ChunkOffset{3});
+
+//   d->add_segment(int_value_segment, ColumnID{0});
+//   auto segment = d->get_segment(ColumnID{0});
+//   EXPECT_EQ(segment, int_value_segment);
+//   EXPECT_THROW(d->add_segment(int_value_segment, ColumnID{4}), std::exception);
+//  }
 
 }  // namespace opossum

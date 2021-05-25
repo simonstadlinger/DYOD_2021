@@ -12,7 +12,7 @@
 
 namespace opossum {
 
-Chunk::Chunk(size_t column_count) { _segments = std::vector<std::shared_ptr<BaseSegment>>(column_count); }
+Chunk::Chunk(ColumnCount column_count) : _segments(std::vector<std::shared_ptr<BaseSegment>>(column_count)){}
 
 void Chunk::add_segment(std::shared_ptr<BaseSegment> segment) {
   std::lock_guard<std::mutex> lock(_add_segment_lock);
@@ -20,6 +20,9 @@ void Chunk::add_segment(std::shared_ptr<BaseSegment> segment) {
 }
 
 void Chunk::add_segment(std::shared_ptr<BaseSegment> segment, ColumnID col_id) {
+  Assert(size() > ChunkOffset{0}, "wrong construction");
+  Assert(size() >= ChunkOffset{col_id}, "Out of bounds");
+
   std::lock_guard<std::mutex> lock(_add_segment_lock);
   _segments[col_id] = segment;
 }
