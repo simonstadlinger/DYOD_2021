@@ -24,7 +24,7 @@ class Chunk : private Noncopyable {
  public:
   Chunk() = default;
 
-  Chunk(size_t column_count);
+  explicit Chunk(size_t column_count);
 
   // adds a segment to the "right" of the chunk
   void add_segment(std::shared_ptr<BaseSegment> segment);

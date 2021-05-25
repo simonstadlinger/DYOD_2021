@@ -102,8 +102,8 @@ TEST_F(ReferenceSegmentTest, Size) {
   EXPECT_EQ(reference_segment.size(), 3);
 
   // PosList with (0, 2), (1, 0)
-  auto other_pos_list = std::make_shared<PosList>(
-      std::initializer_list<RowID>({RowID{ChunkID{0}, 2}, RowID{ChunkID{1}, 0}}));
+  auto other_pos_list =
+      std::make_shared<PosList>(std::initializer_list<RowID>({RowID{ChunkID{0}, 2}, RowID{ChunkID{1}, 0}}));
 
   auto smaller_reference_segment = ReferenceSegment(_test_table, ColumnID{0}, other_pos_list);
 

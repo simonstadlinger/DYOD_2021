@@ -104,10 +104,9 @@ const Chunk& Table::get_chunk(ChunkID chunk_id) const {
 }
 
 void Table::emplace_chunk(std::shared_ptr<Chunk> chunk) {
-  if(_chunks[0]->size() == 0) {
+  if (_chunks[0]->size() == 0) {
     _chunks[0] = chunk;
-  }
-  else {
+  } else {
     _chunks.push_back(chunk);
   }
 }

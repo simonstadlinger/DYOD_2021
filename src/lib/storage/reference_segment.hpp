@@ -9,12 +9,11 @@
 
 #include "base_segment.hpp"
 #include "dictionary_segment.hpp"
+#include "resolve_type.hpp"
 #include "table.hpp"
 #include "types.hpp"
 #include "utils/assert.hpp"
 #include "value_segment.hpp"
-#include "resolve_type.hpp"
-
 
 namespace opossum {
 
@@ -28,32 +27,22 @@ class ReferenceSegment : public BaseSegment {
       : _ref_table(referenced_table), _ref_col_id(referenced_column_id), _pos_list(pos) {}
 
   AllTypeVariant operator[](const ChunkOffset chunk_offset) const override {
-      auto position = _pos_list->at(chunk_offset);
-      auto& chunk = _ref_table->get_chunk(position.chunk_id);
-      auto segment = chunk.get_segment(_ref_col_id);
-      return (*segment)[position.chunk_offset];
+    auto position = _pos_list->at(chunk_offset);
+    auto& chunk = _ref_table->get_chunk(position.chunk_id);
+    auto segment = chunk.get_segment(_ref_col_id);
+    return (*segment)[position.chunk_offset];
   };
 
   void append(const AllTypeVariant&) override { throw std::logic_error("ReferenceSegment is immutable"); };
 
-  ChunkOffset size() const override {
-      return _pos_list->size();
-  }
+  ChunkOffset size() const override { return _pos_list->size(); }
 
-  const std::shared_ptr<const PosList>& pos_list() const {
-      return _pos_list;
-  }
-  const std::shared_ptr<const Table>& referenced_table() const {
-      return _ref_table;
-  }
+  const std::shared_ptr<const PosList>& pos_list() const { return _pos_list; }
+  const std::shared_ptr<const Table>& referenced_table() const { return _ref_table; }
 
-  ColumnID referenced_column_id() const {
-      return _ref_col_id;
-  }
+  ColumnID referenced_column_id() const { return _ref_col_id; }
 
-  size_t estimate_memory_usage() const final {
-    return 0;
-  }
+  size_t estimate_memory_usage() const final { return 0; }
 
  protected:
   const std::shared_ptr<const Table> _ref_table;
