@@ -138,8 +138,8 @@ void Table::compress_chunk(ChunkID chunk_id) {
 }
 
 std::shared_ptr<Chunk> Table::_compress_multithreaded(Chunk& uncompressed_chunk) {
-  auto compressed_chunk = std::make_shared<Chunk>();
   auto col_count = column_count();
+  auto compressed_chunk = std::make_shared<Chunk>(col_count);
   std::vector<std::thread> column_threads = {};
   column_threads.reserve(col_count);
 
@@ -164,7 +164,7 @@ void Table::_compress_column(Chunk& uncompressed_chunk, std::shared_ptr<Chunk>& 
   resolve_data_type(column_type(col_id), [&](const auto col_type_string) {
     using ColumnDataType = typename decltype(col_type_string)::type;
     const auto compressed_segment = std::make_shared<DictionarySegment<ColumnDataType>>(column_segment);
-    compressed_chunk->add_segment(compressed_segment);
+    compressed_chunk->add_segment(compressed_segment, col_id);
   });
 }
 
