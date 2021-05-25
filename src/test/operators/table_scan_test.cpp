@@ -130,10 +130,7 @@ TEST_F(OperatorsTableScanTest, SingleScanReturnsCorrectRowCount) {
   EXPECT_TABLE_EQ(scan->get_output(), expected_result);
 }
 
-TEST_F(
-    OperatorsTableScanTest,
-    ScanOnDictColumn) {
-
+TEST_F(OperatorsTableScanTest, ScanOnDictColumn) {
   // we do not need to check for a non existing value, because that happens automatically when we scan the second chunk
 
   std::map<ScanType, std::vector<AllTypeVariant>> tests;
@@ -151,10 +148,7 @@ TEST_F(
   }
 }
 
-TEST_F(
-    OperatorsTableScanTest,
-    ScanOnReferencedDictColumn) {
-
+TEST_F(OperatorsTableScanTest, ScanOnReferencedDictColumn) {
   // we do not need to check for a non existing value, because that happens automatically when we scan the second chunk
 
   std::map<ScanType, std::vector<AllTypeVariant>> tests;

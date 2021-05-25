@@ -5,8 +5,8 @@
 #include <string>
 #include <vector>
 
-#include <storage/reference_segment.hpp>
 #include <storage/dictionary_segment.hpp>
+#include <storage/reference_segment.hpp>
 #include <storage/table.hpp>
 #include <storage/value_segment.hpp>
 #include "resolve_type.hpp"
