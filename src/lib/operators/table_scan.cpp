@@ -97,6 +97,7 @@ std::shared_ptr<const Table> TableScan::_on_execute() {
       });
     }
   } else {
+  //no ref segment
     auto chunk_count = input_table->chunk_count();
     for (auto chunk_id = ChunkID{0}; chunk_id < chunk_count; ++chunk_id) {
       auto& chunk = input_table->get_chunk(chunk_id);
