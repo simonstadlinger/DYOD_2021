@@ -75,6 +75,7 @@ TEST_F(StorageChunkTest, AssertConstruction) {
   
   auto d = std::make_shared<Chunk>(col_count);
   EXPECT_EQ(d->column_count(), ChunkOffset{3});
+  
   d->add_segment(int_value_segment, ColumnID{0});
   auto segment = d->get_segment(ColumnID{0});
   EXPECT_EQ(segment, int_value_segment);
