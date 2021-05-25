@@ -79,6 +79,7 @@ TEST_F(StorageChunkTest, AssertConstruction) {
   d->add_segment(int_value_segment, ColumnID{0});
   auto segment = d->get_segment(ColumnID{0});
   EXPECT_EQ(segment, int_value_segment);
+  
   EXPECT_THROW(d->add_segment(int_value_segment, ColumnID{4}), std::exception);
 }
 
