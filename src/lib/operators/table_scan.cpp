@@ -99,11 +99,10 @@ std::shared_ptr<const Table> TableScan::_on_execute() {
       auto segment = input_table->get_chunk(chunk_id).get_segment(_column_id);
       resolve_data_type(col_type, [&](const auto data_type_t) {
         using Type = typename decltype(data_type_t)::type;
-        segment = std::dynamic_pointer_cast<ValueSegment<Type>>(segment);
+        auto value_segment = std::dynamic_pointer_cast<ValueSegment<Type>>(segment);
         auto _comparator = _get_comparator_method<Type>();
-        if (segment) {
+        if (value_segment) {
           // Value Segment
-          auto value_segment = std::dynamic_pointer_cast<ValueSegment<Type>>(segment);
           auto comparison_value = type_cast<Type>(value_segment->values()[chunk_offset]);
           if(_comparator(type_cast<Type>(_search_value), comparison_value)) {
             pos_list->push_back(RowID{chunk_id, chunk_offset});
@@ -128,11 +127,10 @@ std::shared_ptr<const Table> TableScan::_on_execute() {
       // Fill position list for different segment types
       resolve_data_type(col_type, [&](const auto data_type_t) {
         using Type = typename decltype(data_type_t)::type;
-        segment = std::dynamic_pointer_cast<ValueSegment<Type>>(segment);
+        auto value_segment = std::dynamic_pointer_cast<ValueSegment<Type>>(segment);
         auto _comparator = _get_comparator_method<Type>();
-        if (segment) {
+        if (value_segment) {
           // Value Segment
-          auto value_segment = std::dynamic_pointer_cast<ValueSegment<Type>>(segment);
           auto chunk_size = chunk.size();
           for (auto chunk_offset = ChunkOffset{0}; chunk_offset < chunk_size; ++chunk_offset) {
             // TODO: extract method
