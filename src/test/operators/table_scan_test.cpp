@@ -267,4 +267,17 @@ TEST_F(OperatorsTableScanTest, ScanOnWideDictionarySegment) {
   EXPECT_EQ(scan_2->get_output()->row_count(), static_cast<size_t>(37));
 }
 
+TEST_F(OperatorsTableScanTest, FailOnTypeMissmatchSingleScan) {
+  auto scan = std::make_shared<TableScan>(_table_wrapper, ColumnID{0}, ScanType::OpLessThan, "1234");
+  EXPECT_THROW(scan->execute(), std::exception);
+}
+
+TEST_F(OperatorsTableScanTest, FailOnTypeMissmatchDoubleScan) {
+  auto scan_1 = std::make_shared<TableScan>(_table_wrapper, ColumnID{0}, ScanType::OpGreaterThanEquals, 1234);
+  scan_1->execute();
+
+  auto scan_2 = std::make_shared<TableScan>(scan_1, ColumnID{1}, ScanType::OpLessThan, "457.9");
+  EXPECT_THROW(scan_2->execute(), std::exception);
+}
+
 }  // namespace opossum
