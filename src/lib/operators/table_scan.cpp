@@ -118,7 +118,6 @@ std::shared_ptr<const Table> TableScan::_on_execute() {
           // Value Segment
           auto chunk_size = chunk.size();
           for (auto chunk_offset = ChunkOffset{0}; chunk_offset < chunk_size; ++chunk_offset) {
-            // TODO(anyone): extract method
             auto comparison_value = type_cast<Type>(value_segment->values()[chunk_offset]);
             if (_comparator(type_cast<Type>(_search_value), comparison_value)) {
               pos_list->push_back(RowID{chunk_id, chunk_offset});
@@ -129,7 +128,6 @@ std::shared_ptr<const Table> TableScan::_on_execute() {
           auto dictionary_segment = std::dynamic_pointer_cast<DictionarySegment<Type>>(segment);
           auto chunk_size = chunk.size();
           for (auto chunk_offset = ChunkOffset{0}; chunk_offset < chunk_size; ++chunk_offset) {
-            // TODO(anyone): extract method (#48)
             auto comparison_value = type_cast<Type>(dictionary_segment->get(chunk_offset));
             if (_comparator(type_cast<Type>(_search_value), comparison_value)) {
               pos_list->push_back(RowID{chunk_id, chunk_offset});
@@ -140,6 +138,7 @@ std::shared_ptr<const Table> TableScan::_on_execute() {
     }
   }
 
+  // fill output table with position list
   std::shared_ptr<Chunk> final_chunk = std::make_shared<Chunk>(column_count);
   for (auto column_id = ColumnID{0}; ColumnCount{column_id} < column_count; column_id++) {
     // for each col, create Reference Segment and append to table
