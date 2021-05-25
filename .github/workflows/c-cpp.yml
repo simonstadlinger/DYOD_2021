@@ -27,4 +27,4 @@ jobs:
       run: ./scripts/lint.sh
     - name: Run Tests
       run: cd cmake-build-debug
-      run: ./cmake-build-debug/hyriseTest
+      run: ./hyriseTest
