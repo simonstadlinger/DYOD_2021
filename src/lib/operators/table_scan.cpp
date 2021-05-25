@@ -69,6 +69,7 @@ std::shared_ptr<const Table> TableScan::_on_execute() {
   const auto& probe_segment = probe_chunk.get_segment(ColumnID{0});
   auto probe_ref_segment = std::dynamic_pointer_cast<ReferenceSegment>(probe_segment);
   if (probe_ref_segment) {
+  //ref segment
     input_table = probe_ref_segment->referenced_table();
     for (auto position : *(probe_ref_segment->pos_list())) {
       auto chunk_id = position.chunk_id;
