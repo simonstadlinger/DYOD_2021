@@ -20,8 +20,8 @@ void Chunk::add_segment(std::shared_ptr<BaseSegment> segment) {
 }
 
 void Chunk::add_segment(std::shared_ptr<BaseSegment> segment, ColumnID col_id) {
-  Assert(size() > ChunkOffset{0}, "wrong construction");
-  Assert(size() >= ChunkOffset{col_id}, "Out of bounds");
+  Assert(!_segments.empty(), "wrong construction");
+  Assert(column_count() >= col_id, "Out of bounds");
 
   std::lock_guard<std::mutex> lock(_add_segment_lock);
   _segments[col_id] = segment;
