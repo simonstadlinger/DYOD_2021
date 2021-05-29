@@ -12,9 +12,19 @@
 
 namespace opossum {
 
+Chunk::Chunk(ColumnCount column_count) : _segments(std::vector<std::shared_ptr<BaseSegment>>(column_count)) {}
+
 void Chunk::add_segment(std::shared_ptr<BaseSegment> segment) {
   std::lock_guard<std::mutex> lock(_add_segment_lock);
   _segments.push_back(segment);
+}
+
+void Chunk::add_segment(std::shared_ptr<BaseSegment> segment, ColumnID col_id) {
+  Assert(!_segments.empty(), "wrong construction");
+  Assert(column_count() >= col_id, "Out of bounds");
+
+  std::lock_guard<std::mutex> lock(_add_segment_lock);
+  _segments[col_id] = segment;
 }
 
 void Chunk::append(const std::vector<AllTypeVariant>& values) {

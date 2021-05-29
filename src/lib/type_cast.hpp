@@ -21,7 +21,7 @@ namespace detail {
 template <typename Sequence, typename T>
 constexpr auto index_of(Sequence const& sequence, T const& element) {
   constexpr auto size = decltype(hana::size(hana::take_while(sequence, hana::not_equal.to(element)))){};
-  return decltype(size)::value;
+  return static_cast<size_t>(decltype(size)::value);
 }
 
 }  // namespace detail

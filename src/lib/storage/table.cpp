@@ -23,6 +23,11 @@ Table::Table(const ChunkOffset target_chunk_size) : _max_chunk_size{target_chunk
   _chunks.push_back(std::make_shared<Chunk>());
 }
 
+void Table::add_column_definition(const std::string& name, const std::string& type) {
+  _col_names.push_back(name);
+  _col_types.push_back(type);
+}
+
 void Table::add_column(const std::string& name, const std::string& type) {
   Assert(row_count() == 0, "The chunk is not empty: no modification of the column layout possible");
   _col_names.push_back(name);
@@ -50,6 +55,11 @@ void Table::append(const std::vector<AllTypeVariant>& values) {
     }
   }
   _chunks.back()->append(values);
+}
+
+void Table::create_new_chunk() {
+  auto new_chunk = std::make_shared<Chunk>();
+  _chunks.push_back(new_chunk);
 }
 
 ColumnCount Table::column_count() const {
@@ -93,6 +103,14 @@ const Chunk& Table::get_chunk(ChunkID chunk_id) const {
   return std::as_const(_get_chunk(chunk_id));
 }
 
+void Table::emplace_chunk(std::shared_ptr<Chunk> chunk) {
+  if (_chunks[0]->size() == 0) {
+    _chunks[0] = chunk;
+  } else {
+    _chunks.push_back(chunk);
+  }
+}
+
 Chunk& Table::_get_chunk(ChunkID chunk_id) const { return *_chunks.at(chunk_id); }
 
 void Table::print(std::ostream& out) const {
@@ -119,12 +137,12 @@ void Table::compress_chunk(ChunkID chunk_id) {
 }
 
 std::shared_ptr<Chunk> Table::_compress_multithreaded(Chunk& uncompressed_chunk) {
-  auto compressed_chunk = std::make_shared<Chunk>();
   auto col_count = column_count();
+  auto compressed_chunk = std::make_shared<Chunk>(col_count);
   std::vector<std::thread> column_threads = {};
   column_threads.reserve(col_count);
 
-  for (ColumnID column_id = ColumnID{0}; column_id < col_count; column_id++) {
+  for (auto column_id = ColumnID{0}; column_id < col_count; column_id++) {
     std::thread single_column_thread(&Table::_compress_column, this, std::ref(uncompressed_chunk),
                                      std::ref(compressed_chunk), column_id);
     column_threads.push_back(std::move(single_column_thread));
@@ -138,7 +156,6 @@ std::shared_ptr<Chunk> Table::_compress_multithreaded(Chunk& uncompressed_chunk)
 
   return compressed_chunk;
 }
-
 void Table::_compress_column(Chunk& uncompressed_chunk, std::shared_ptr<Chunk>& compressed_chunk,
                              ColumnID col_id) const {
   const auto& column_segment = uncompressed_chunk.get_segment(col_id);
@@ -146,7 +163,7 @@ void Table::_compress_column(Chunk& uncompressed_chunk, std::shared_ptr<Chunk>& 
   resolve_data_type(column_type(col_id), [&](const auto col_type_string) {
     using ColumnDataType = typename decltype(col_type_string)::type;
     const auto compressed_segment = std::make_shared<DictionarySegment<ColumnDataType>>(column_segment);
-    compressed_chunk->add_segment(compressed_segment);
+    compressed_chunk->add_segment(compressed_segment, col_id);
   });
 }
 

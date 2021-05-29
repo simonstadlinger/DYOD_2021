@@ -24,8 +24,13 @@ class Chunk : private Noncopyable {
  public:
   Chunk() = default;
 
+  explicit Chunk(ColumnCount column_count);
+
   // adds a segment to the "right" of the chunk
   void add_segment(std::shared_ptr<BaseSegment> segment);
+
+  // adds segment at specific column
+  void add_segment(std::shared_ptr<BaseSegment> segment, ColumnID col_id);
 
   // returns the number of columns (cannot exceed ColumnID (uint16_t))
   ColumnCount column_count() const;

@@ -72,6 +72,7 @@ void BaseTest::_print_matrix(const BaseTest::Matrix& matrix) {
   Matrix right = _table_to_matrix(tright);
   // compare schema of tables
   //  - column count
+
   if (tleft.column_count() != tright.column_count()) {
     _print_matrix(left);
     _print_matrix(right);
@@ -100,8 +101,8 @@ void BaseTest::_print_matrix(const BaseTest::Matrix& matrix) {
     if (left_data_type != right_data_type || tleft.column_name(column_id) != tright.column_name(column_id)) {
       std::cout << "Column with ID " << column_id << " is different" << std::endl;
       std::cout << "Got: " << tleft.column_name(column_id) << " (" << tleft.column_type(column_id) << ")" << std::endl;
-      std::cout << "Expected: " << tright.column_name(column_id) << " (" << tright.column_type(column_id) << ")" \
-      << std::endl;
+      std::cout << "Expected: " << tright.column_name(column_id) << " (" << tright.column_type(column_id) << ")"
+                << std::endl;
       return ::testing::AssertionFailure() << "Table schema is different.";
     }
   }

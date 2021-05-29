@@ -43,7 +43,7 @@ class Table : private Noncopyable {
   const Chunk& get_chunk(ChunkID chunk_id) const;
 
   // Adds a chunk to the table. If the first chunk is empty, it is replaced.
-  void emplace_chunk(Chunk chunk);
+  void emplace_chunk(std::shared_ptr<Chunk> chunk_ptr);
 
   // Returns a list of all column names.
   const std::vector<std::string>& column_names() const;
@@ -62,6 +62,11 @@ class Table : private Noncopyable {
   // return the target chunk size (cannot exceed ChunkOffset (uint32_t))
   ChunkOffset target_chunk_size() const;
 
+  // adds column definition without creating the actual columns
+  // this is helpful when, e.g., an operator first creates the structure of the table
+  // and then adds chunk by chunk
+  void add_column_definition(const std::string& name, const std::string& type);
+
   // adds a column to the end, i.e., right, of the table
   // this can only be done if the table does not yet have any entries, because we would otherwise have to deal
   // with default values
@@ -72,6 +77,9 @@ class Table : private Noncopyable {
   void append(const std::vector<AllTypeVariant>& values);
 
   void print(std::ostream& out = std::cout) const;
+
+  // creates a new chunk and appends it
+  void create_new_chunk();
 
   // compresses a ValueColumn into a DictionaryColumn
   void compress_chunk(ChunkID chunk_id);
