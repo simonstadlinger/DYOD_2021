@@ -42,7 +42,7 @@ class ReferenceSegment : public BaseSegment {
 
   ColumnID referenced_column_id() const { return _ref_col_id; }
 
-  size_t estimate_memory_usage() const final { return 0; }
+  size_t estimate_memory_usage() const final { return (sizeof(RowID) * _pos_list->size()); }
 
  protected:
   const std::shared_ptr<const Table> _ref_table;
